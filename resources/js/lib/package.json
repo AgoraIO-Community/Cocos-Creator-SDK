@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "build": "tsc -p pub-debug && tsc -p pub-release && mv ../agora.js ../agora/agora.js",
+    "build": "tsc -d --emitDeclarationOnly --outDir ../ && tsc --removeComments --outDir ../agora",
     "doc": "typedoc -p pub-release"
   },
   "devDependencies": {

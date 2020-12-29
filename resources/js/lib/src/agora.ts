@@ -6554,6 +6554,7 @@ namespace agora {
                 bridge.logEngineEventCase('onStreamMessage', JSON.stringify({
                     uid,
                     streamId,
+                    // @ts-ignore
                     data: String.fromCharCode.apply(null, data),
                     length
                 }))
@@ -6713,6 +6714,7 @@ namespace agora {
                 bridge.logEngineEventCase('onMetadataReceived', JSON.stringify({
                     uid,
                     size,
+                    // @ts-ignore
                     buffer: String.fromCharCode.apply(null, buffer),
                     timeStampMs
                 }))
@@ -6733,11 +6735,11 @@ namespace agora {
                 event.emit('firstRemoteVideoDecoded', evt.stream.getId(), (stats as AgoraRTC.RemoteStreamStats).videoReceiveResolutionWidth, (stats as AgoraRTC.RemoteStreamStats).videoReceiveResolutionHeight, 0)
             })
         })
-        client.on('stream-published', (evt: { stream: AgoraRTC.Stream }) => {
+        client.on('stream-published', (_: { stream: AgoraRTC.Stream }) => {
             event.emit('firstLocalAudioFramePublished', 0)
             event.emit('firstLocalVideoFramePublished', 0)
         })
-        client.on('stream-unpublished', (evt: { stream: AgoraRTC.Stream, options: { streamType: REMOTE_VIDEO_STREAM_TYPE } }) => {
+        client.on('stream-unpublished', (_: { stream: AgoraRTC.Stream, options: { streamType: REMOTE_VIDEO_STREAM_TYPE } }) => {
             event.emit('localAudioStateChanged', LOCAL_AUDIO_STREAM_STATE.LOCAL_AUDIO_STREAM_STATE_STOPPED, LOCAL_AUDIO_STREAM_ERROR.LOCAL_AUDIO_STREAM_ERROR_OK)
             event.emit('localVideoStateChanged', LOCAL_VIDEO_STREAM_STATE.LOCAL_VIDEO_STREAM_STATE_STOPPED, LOCAL_VIDEO_STREAM_ERROR.LOCAL_VIDEO_STREAM_ERROR_OK)
         })
@@ -6783,9 +6785,9 @@ namespace agora {
         client.on('unmute-video', (evt: { uid: string }) => {
             event.emit('userMuteVideo', evt.uid, false)
         })
-        client.on('crypt-error', (evt: { cryptType: string }) => {
+        client.on('crypt-error', (_: { cryptType: string }) => {
         })
-        client.on('client-banned', (evt: { uid: string, attr: string }) => {
+        client.on('client-banned', (_: { uid: string, attr: string }) => {
             event.emit('connection-banned')
             event.emit('connectionBanned')
         })
@@ -6793,9 +6795,9 @@ namespace agora {
             event.emit('activeSpeaker', evt.uid)
         })
         client.on('volume-indicator', (evt: { attr: { uid: string, level: number }[] }) => {
-            const speakers = []
+            const speakers: { uid: string, volume: number }[] = []
             let sumVolume = 0
-            evt.attr.forEach(function ({uid, level}, index) {
+            evt.attr.forEach(function ({uid, level}, _) {
                 speakers.push({uid, volume: level})
                 sumVolume += level
             });
@@ -6811,16 +6813,16 @@ namespace agora {
         client.on('liveStreamingStopped', (evt: { url: string }) => {
             event.emit('rtmpStreamingStateChanged', evt.url, RTMP_STREAM_PUBLISH_STATE.RTMP_STREAM_PUBLISH_STATE_IDLE, null)
         })
-        client.on('liveTranscodingUpdated', (evt: { reason: string }) => {
+        client.on('liveTranscodingUpdated', (_: { reason: string }) => {
             event.emit('transcodingUpdated')
         })
         client.on('streamInjectedStatus', (evt: { url: string, uid: string, status: INJECT_STREAM_STATUS }) => {
             event.emit('streamInjectedStatus', evt.url, evt.uid, evt.status)
         })
-        client.on('onTokenPrivilegeWillExpire', (evt) => {
+        client.on('onTokenPrivilegeWillExpire', (_) => {
             event.emit('tokenPrivilegeWillExpire')
         })
-        client.on('onTokenPrivilegeDidExpire', (evt) => {
+        client.on('onTokenPrivilegeDidExpire', (_) => {
         })
         client.on('error', (evt) => {
             event.emit('error', ERROR_CODE_TYPE.ERR_FAILED, evt.reason)
@@ -6834,9 +6836,9 @@ namespace agora {
         client.on('playout-device-changed', (evt: { device: MediaDeviceInfo, state: string, initAt: number }) => {
             event.emit('playoutDeviceChanged', evt.state, evt.device)
         })
-        client.on('camera-changed', (evt: { device: MediaDeviceInfo, state: string, initAt: number }) => {
+        client.on('camera-changed', (_: { device: MediaDeviceInfo, state: string, initAt: number }) => {
         })
-        client.on('stream-type-changed', (evt: { uid: string, streamType: number }) => {
+        client.on('stream-type-changed', (_: { uid: string, streamType: number }) => {
         })
         client.on('connection-state-change', (evt) => {
             const state = {
@@ -6845,13 +6847,15 @@ namespace agora {
                 'CONNECTED': CONNECTION_STATE_TYPE.CONNECTION_STATE_CONNECTED,
                 'DISCONNECTING': undefined,
             }
+            // @ts-ignore
             if (state[evt.curState] !== undefined) {
+                // @ts-ignore
                 event.emit('connectionStateChanged', state[evt.curState], null)
             }
         })
-        client.on('stream-reconnect-start', (evt) => {
+        client.on('stream-reconnect-start', (_) => {
         })
-        client.on('stream-reconnect-end', (evt) => {
+        client.on('stream-reconnect-end', (_) => {
         })
         client.on('client-role-changed', (evt) => {
             event.emit('client-role-changed', null, evt.role)
@@ -6869,7 +6873,7 @@ namespace agora {
         client.on('stream-fallback', (evt) => {
             event.emit('remoteSubscribeFallbackToAudioOnly', evt.uid, evt.attr === 1)
         })
-        client.on('stream-updated', (evt) => {
+        client.on('stream-updated', (_) => {
             // TODO
         })
         client.on('exception', (evt) => {
@@ -7075,6 +7079,7 @@ namespace agora {
                 [CLIENT_ROLE_TYPE.CLIENT_ROLE_AUDIENCE, 'audience'],
                 [CLIENT_ROLE_TYPE.CLIENT_ROLE_BROADCASTER, 'host'],
             ])
+            // @ts-ignore
             client.setClientRole(roles.get(role))
             return ERROR_CODE_TYPE.ERR_OK
         }
@@ -7378,7 +7383,7 @@ namespace agora {
      *
      * @return A [UserInfo]{@link agora.UserInfo} interface that identifies the user.
      */
-    export function getUserInfoByUserAccount(userAccount: string): UserInfo {
+    export function getUserInfoByUserAccount(userAccount: string): UserInfo | null {
         if (isWeb) {
             return null
         }
@@ -7399,7 +7404,7 @@ namespace agora {
      *
      * @return A [UserInfo]{@link agora.UserInfo} interface that identifies the user.
      */
-    export function getUserInfoByUid(uid: number): UserInfo {
+    export function getUserInfoByUid(uid: number): UserInfo | null {
         if (isWeb) {
             return null
         }
@@ -7589,9 +7594,11 @@ namespace agora {
                     [VIDEO_PROFILE_TYPE.VIDEO_PROFILE_LANDSCAPE_4K]: '4K_1',
                     [VIDEO_PROFILE_TYPE.VIDEO_PROFILE_LANDSCAPE_4K_3]: '4K_3',
                 }
+                // @ts-ignore
                 if (profiles[profile] === undefined) {
                     return ERROR_CODE_TYPE.ERR_NOT_SUPPORTED
                 } else {
+                    // @ts-ignore
                     localStream.setVideoProfile(profiles[profile])
                     return ERROR_CODE_TYPE.ERR_OK
                 }
@@ -7862,9 +7869,11 @@ namespace agora {
                     [AUDIO_PROFILE_TYPE.AUDIO_PROFILE_MUSIC_HIGH_QUALITY]: 'high_quality',
                     [AUDIO_PROFILE_TYPE.AUDIO_PROFILE_MUSIC_HIGH_QUALITY_STEREO]: 'high_quality_stereo',
                 }
+                // @ts-ignore
                 if (profiles[profile] === undefined) {
                     return ERROR_CODE_TYPE.ERR_NOT_SUPPORTED
                 } else {
+                    // @ts-ignore
                     localStream.setAudioProfile(profiles[profile])
                     return ERROR_CODE_TYPE.ERR_OK
                 }
@@ -9235,9 +9244,11 @@ namespace agora {
                 [LOG_FILTER_TYPE.LOG_FILTER_ERROR]: 3,
                 [LOG_FILTER_TYPE.LOG_FILTER_OFF]: 4,
             }
+            // @ts-ignore
             if (levels[filter] === undefined) {
                 return ERROR_CODE_TYPE.ERR_NOT_SUPPORTED
             } else {
+                // @ts-ignore
                 AgoraRTC.Logger.setLogLevel(levels[filter])
                 return ERROR_CODE_TYPE.ERR_OK
             }
@@ -9473,6 +9484,7 @@ namespace agora {
      *     - 0: Success.
      * - < 0: Failure.
      */
+    // @ts-ignore
     function setRecordingAudioFrameParameters(sampleRate: number, channel: number, mode: RAW_AUDIO_FRAME_OP_MODE_TYPE, samplesPerCall: number): number {
         if (isWeb) {
             return ERROR_CODE_TYPE.ERR_NOT_SUPPORTED
@@ -9505,6 +9517,7 @@ namespace agora {
      * - 0: Success.
      * - < 0: Failure.
      */
+    // @ts-ignore
     function setPlaybackAudioFrameParameters(sampleRate: number, channel: number, mode: RAW_AUDIO_FRAME_OP_MODE_TYPE, samplesPerCall: number): number {
         if (isWeb) {
             return ERROR_CODE_TYPE.ERR_NOT_SUPPORTED
@@ -9532,6 +9545,7 @@ namespace agora {
      * - 0: Success.
      * - < 0: Failure.
      */
+    // @ts-ignore
     function setMixedAudioFrameParameters(sampleRate: number, samplesPerCall: number): number {
         if (isWeb) {
             return ERROR_CODE_TYPE.ERR_NOT_SUPPORTED
@@ -9855,7 +9869,7 @@ namespace agora {
      *
      * @return The current call ID.
      */
-    export function getCallId(): string {
+    export function getCallId(): string | null {
         if (isWeb) {
             return null
         }
@@ -10015,7 +10029,7 @@ namespace agora {
      *
      * @return See [WARN_CODE_TYPE]{@link agora.WARN_CODE_TYPE} or [ERROR_CODE_TYPE]{@link agora.ERROR_CODE_TYPE}.
      */
-    export function getErrorDescription(code: number): string {
+    export function getErrorDescription(code: number): string | null {
         if (isWeb) {
             return null
         }
@@ -10621,6 +10635,7 @@ namespace agora {
                 'CONNECTED': CONNECTION_STATE_TYPE.CONNECTION_STATE_CONNECTED,
                 'DISCONNECTING': undefined,
             }
+            // @ts-ignore
             return state[client.getConnectionState()]
         }
         return callNativeMethod(API_TYPE.GET_CONNECTION_STATE)
@@ -10727,546 +10742,546 @@ declare interface agora {
     /**
      * @event warning
      */
-    on(type: 'warning', callback: typeof AgoraRtcEvents.prototype.onWarning)
+    on(type: 'warning', callback: typeof AgoraRtcEvents.prototype.onWarning): void
 
     /**
      * @event error
      */
-    on(type: 'error', callback: typeof AgoraRtcEvents.prototype.onError)
+    on(type: 'error', callback: typeof AgoraRtcEvents.prototype.onError): void
 
     /**
      * @deprecated
      *
      * @event join-channel-success
      */
-    on(type: 'join-channel-success', callback: typeof AgoraRtcEvents.prototype.onJoinChannelSuccess)
+    on(type: 'join-channel-success', callback: typeof AgoraRtcEvents.prototype.onJoinChannelSuccess): void
 
     /**
      * @event joinChannelSuccess
      */
-    on(type: 'joinChannelSuccess', callback: typeof AgoraRtcEvents.prototype.onJoinChannelSuccess)
+    on(type: 'joinChannelSuccess', callback: typeof AgoraRtcEvents.prototype.onJoinChannelSuccess): void
 
     /**
      * @deprecated
      *
      * @event rejoin-channel-success
      */
-    on(type: 'rejoin-channel-success', callback: typeof AgoraRtcEvents.prototype.onRejoinChannelSuccess)
+    on(type: 'rejoin-channel-success', callback: typeof AgoraRtcEvents.prototype.onRejoinChannelSuccess): void
 
     /**
      * @event rejoinChannelSuccess
      */
-    on(type: 'rejoinChannelSuccess', callback: typeof AgoraRtcEvents.prototype.onRejoinChannelSuccess)
+    on(type: 'rejoinChannelSuccess', callback: typeof AgoraRtcEvents.prototype.onRejoinChannelSuccess): void
 
     /**
      * @deprecated
      *
      * @event leave-channel
      */
-    on(type: 'leave-channel', callback: typeof AgoraRtcEvents.prototype.onLeaveChannel)
+    on(type: 'leave-channel', callback: typeof AgoraRtcEvents.prototype.onLeaveChannel): void
 
     /**
      * @event leaveChannel
      */
-    on(type: 'leaveChannel', callback: typeof AgoraRtcEvents.prototype.onLeaveChannel)
+    on(type: 'leaveChannel', callback: typeof AgoraRtcEvents.prototype.onLeaveChannel): void
 
     /**
      * @deprecated
      *
      * @event client-role-changed
      */
-    on(type: 'client-role-changed', callback: typeof AgoraRtcEvents.prototype.onClientRoleChanged)
+    on(type: 'client-role-changed', callback: typeof AgoraRtcEvents.prototype.onClientRoleChanged): void
 
     /**
      * @event clientRoleChanged
      */
-    on(type: 'clientRoleChanged', callback: typeof AgoraRtcEvents.prototype.onClientRoleChanged)
+    on(type: 'clientRoleChanged', callback: typeof AgoraRtcEvents.prototype.onClientRoleChanged): void
 
     /**
      * @deprecated
      *
      * @event user-joined
      */
-    on(type: 'user-joined', callback: typeof AgoraRtcEvents.prototype.onUserJoined)
+    on(type: 'user-joined', callback: typeof AgoraRtcEvents.prototype.onUserJoined): void
 
     /**
      * @event userJoined
      */
-    on(type: 'userJoined', callback: typeof AgoraRtcEvents.prototype.onUserJoined)
+    on(type: 'userJoined', callback: typeof AgoraRtcEvents.prototype.onUserJoined): void
 
     /**
      * @deprecated
      *
      * @event user-offline
      */
-    on(type: 'user-offline', callback: typeof AgoraRtcEvents.prototype.onUserOffline)
+    on(type: 'user-offline', callback: typeof AgoraRtcEvents.prototype.onUserOffline): void
 
     /**
      * @event userOffline
      */
-    on(type: 'userOffline', callback: typeof AgoraRtcEvents.prototype.onUserOffline)
+    on(type: 'userOffline', callback: typeof AgoraRtcEvents.prototype.onUserOffline): void
 
     /**
      * @event lastmileQuality
      */
-    on(type: 'lastmileQuality', callback: typeof AgoraRtcEvents.prototype.onLastmileQuality)
+    on(type: 'lastmileQuality', callback: typeof AgoraRtcEvents.prototype.onLastmileQuality): void
 
     /**
      * @event lastmileProbeResult
      */
-    on(type: 'lastmileProbeResult', callback: typeof AgoraRtcEvents.prototype.onLastmileProbeResult)
+    on(type: 'lastmileProbeResult', callback: typeof AgoraRtcEvents.prototype.onLastmileProbeResult): void
 
     /**
      * @deprecated
      *
      * @event connection-interrupted
      */
-    on(type: 'connection-interrupted', callback: typeof AgoraRtcEvents.prototype.onConnectionInterrupted)
+    on(type: 'connection-interrupted', callback: typeof AgoraRtcEvents.prototype.onConnectionInterrupted): void
 
     /**
      * @event connectionInterrupted
      */
-    on(type: 'connectionInterrupted', callback: typeof AgoraRtcEvents.prototype.onConnectionInterrupted)
+    on(type: 'connectionInterrupted', callback: typeof AgoraRtcEvents.prototype.onConnectionInterrupted): void
 
     /**
      * @deprecated
      *
      * @event connection-lost
      */
-    on(type: 'connection-lost', callback: typeof AgoraRtcEvents.prototype.onConnectionLost)
+    on(type: 'connection-lost', callback: typeof AgoraRtcEvents.prototype.onConnectionLost): void
 
     /**
      * @event connectionLost
      */
-    on(type: 'connectionLost', callback: typeof AgoraRtcEvents.prototype.onConnectionLost)
+    on(type: 'connectionLost', callback: typeof AgoraRtcEvents.prototype.onConnectionLost): void
 
     /**
      * @deprecated
      *
      * @event connection-banned
      */
-    on(type: 'connection-banned', callback: typeof AgoraRtcEvents.prototype.onConnectionBanned)
+    on(type: 'connection-banned', callback: typeof AgoraRtcEvents.prototype.onConnectionBanned): void
 
     /**
      * @event connectionBanned
      */
-    on(type: 'connectionBanned', callback: typeof AgoraRtcEvents.prototype.onConnectionBanned)
+    on(type: 'connectionBanned', callback: typeof AgoraRtcEvents.prototype.onConnectionBanned): void
 
     /**
      * @event apiCallExecuted
      */
-    on(type: 'apiCallExecuted', callback: typeof AgoraRtcEvents.prototype.onApiCallExecuted)
+    on(type: 'apiCallExecuted', callback: typeof AgoraRtcEvents.prototype.onApiCallExecuted): void
 
     /**
      * @deprecated
      *
      * @event request-token
      */
-    on(type: 'request-token', callback: typeof AgoraRtcEvents.prototype.onRequestToken)
+    on(type: 'request-token', callback: typeof AgoraRtcEvents.prototype.onRequestToken): void
 
     /**
      * @event requestToken
      */
-    on(type: 'requestToken', callback: typeof AgoraRtcEvents.prototype.onRequestToken)
+    on(type: 'requestToken', callback: typeof AgoraRtcEvents.prototype.onRequestToken): void
 
     /**
      * @event tokenPrivilegeWillExpire
      */
-    on(type: 'tokenPrivilegeWillExpire', callback: typeof AgoraRtcEvents.prototype.onTokenPrivilegeWillExpire)
+    on(type: 'tokenPrivilegeWillExpire', callback: typeof AgoraRtcEvents.prototype.onTokenPrivilegeWillExpire): void
 
     /**
      * @deprecated
      *
      * @event audio-quality
      */
-    on(type: 'audio-quality', callback: typeof AgoraRtcEvents.prototype.onAudioQuality)
+    on(type: 'audio-quality', callback: typeof AgoraRtcEvents.prototype.onAudioQuality): void
 
     /**
      * @event audioQuality
      */
-    on(type: 'audioQuality', callback: typeof AgoraRtcEvents.prototype.onAudioQuality)
+    on(type: 'audioQuality', callback: typeof AgoraRtcEvents.prototype.onAudioQuality): void
 
     /**
      * @event rtcStats
      */
-    on(type: 'rtcStats', callback: typeof AgoraRtcEvents.prototype.onRtcStats)
+    on(type: 'rtcStats', callback: typeof AgoraRtcEvents.prototype.onRtcStats): void
 
     /**
      * @deprecated
      *
      * @event network-quality
      */
-    on(type: 'network-quality', callback: typeof AgoraRtcEvents.prototype.onNetworkQuality)
+    on(type: 'network-quality', callback: typeof AgoraRtcEvents.prototype.onNetworkQuality): void
 
     /**
      * @event networkQuality
      */
-    on(type: 'networkQuality', callback: typeof AgoraRtcEvents.prototype.onNetworkQuality)
+    on(type: 'networkQuality', callback: typeof AgoraRtcEvents.prototype.onNetworkQuality): void
 
     /**
      * @event localVideoStats
      */
-    on(type: 'localVideoStats', callback: typeof AgoraRtcEvents.prototype.onLocalVideoStats)
+    on(type: 'localVideoStats', callback: typeof AgoraRtcEvents.prototype.onLocalVideoStats): void
 
     /**
      * @event remoteVideoStats
      */
-    on(type: 'remoteVideoStats', callback: typeof AgoraRtcEvents.prototype.onRemoteVideoStats)
+    on(type: 'remoteVideoStats', callback: typeof AgoraRtcEvents.prototype.onRemoteVideoStats): void
 
     /**
      * @event localAudioStats
      */
-    on(type: 'localAudioStats', callback: typeof AgoraRtcEvents.prototype.onLocalAudioStats)
+    on(type: 'localAudioStats', callback: typeof AgoraRtcEvents.prototype.onLocalAudioStats): void
 
     /**
      * @event remoteAudioStats
      */
-    on(type: 'remoteAudioStats', callback: typeof AgoraRtcEvents.prototype.onRemoteAudioStats)
+    on(type: 'remoteAudioStats', callback: typeof AgoraRtcEvents.prototype.onRemoteAudioStats): void
 
     /**
      * @event localAudioStateChanged
      */
-    on(type: 'localAudioStateChanged', callback: typeof AgoraRtcEvents.prototype.onLocalAudioStateChanged)
+    on(type: 'localAudioStateChanged', callback: typeof AgoraRtcEvents.prototype.onLocalAudioStateChanged): void
 
     /**
      * @event localAudioStateChanged
      */
-    on(type: 'localAudioStateChanged', callback: typeof AgoraRtcEvents.prototype.onLocalAudioStateChanged)
+    on(type: 'localAudioStateChanged', callback: typeof AgoraRtcEvents.prototype.onLocalAudioStateChanged): void
 
     /**
      * @event remoteAudioStateChanged
      */
-    on(type: 'remoteAudioStateChanged', callback: typeof AgoraRtcEvents.prototype.onRemoteAudioStateChanged)
+    on(type: 'remoteAudioStateChanged', callback: typeof AgoraRtcEvents.prototype.onRemoteAudioStateChanged): void
 
     /**
      * @event audioPublishStateChanged
      */
-    on(type: 'audioPublishStateChanged', callback: typeof AgoraRtcEvents.prototype.onAudioPublishStateChanged)
+    on(type: 'audioPublishStateChanged', callback: typeof AgoraRtcEvents.prototype.onAudioPublishStateChanged): void
 
     /**
      * @event videoPublishStateChanged
      */
-    on(type: 'videoPublishStateChanged', callback: typeof AgoraRtcEvents.prototype.onVideoPublishStateChanged)
+    on(type: 'videoPublishStateChanged', callback: typeof AgoraRtcEvents.prototype.onVideoPublishStateChanged): void
 
     /**
      * @event audioSubscribeStateChanged
      */
-    on(type: 'audioSubscribeStateChanged', callback: typeof AgoraRtcEvents.prototype.onAudioSubscribeStateChanged)
+    on(type: 'audioSubscribeStateChanged', callback: typeof AgoraRtcEvents.prototype.onAudioSubscribeStateChanged): void
 
     /**
      * @event videoSubscribeStateChanged
      */
-    on(type: 'videoSubscribeStateChanged', callback: typeof AgoraRtcEvents.prototype.onVideoSubscribeStateChanged)
+    on(type: 'videoSubscribeStateChanged', callback: typeof AgoraRtcEvents.prototype.onVideoSubscribeStateChanged): void
 
     /**
      * @deprecated
      *
      * @event audio-volume-indication
      */
-    on(type: 'audio-volume-indication', callback: typeof AgoraRtcEvents.prototype.onAudioVolumeIndication)
+    on(type: 'audio-volume-indication', callback: typeof AgoraRtcEvents.prototype.onAudioVolumeIndication): void
 
     /**
      * @event audioVolumeIndication
      */
-    on(type: 'audioVolumeIndication', callback: typeof AgoraRtcEvents.prototype.onAudioVolumeIndication)
+    on(type: 'audioVolumeIndication', callback: typeof AgoraRtcEvents.prototype.onAudioVolumeIndication): void
 
     /**
      * @event activeSpeaker
      */
-    on(type: 'activeSpeaker', callback: typeof AgoraRtcEvents.prototype.onActiveSpeaker)
+    on(type: 'activeSpeaker', callback: typeof AgoraRtcEvents.prototype.onActiveSpeaker): void
 
     /**
      * @event videoStopped
      */
-    on(type: 'videoStopped', callback: typeof AgoraRtcEvents.prototype.onVideoStopped)
+    on(type: 'videoStopped', callback: typeof AgoraRtcEvents.prototype.onVideoStopped): void
 
     /**
      * @event firstLocalVideoFrame
      */
-    on(type: 'firstLocalVideoFrame', callback: typeof AgoraRtcEvents.prototype.onFirstLocalVideoFrame)
+    on(type: 'firstLocalVideoFrame', callback: typeof AgoraRtcEvents.prototype.onFirstLocalVideoFrame): void
 
     /**
      * @event firstLocalVideoFramePublished
      */
-    on(type: 'firstLocalVideoFramePublished', callback: typeof AgoraRtcEvents.prototype.onFirstLocalVideoFramePublished)
+    on(type: 'firstLocalVideoFramePublished', callback: typeof AgoraRtcEvents.prototype.onFirstLocalVideoFramePublished): void
 
     /**
      * @deprecated
      *
      * @event firstRemoteVideoDecoded
      */
-    on(type: 'firstRemoteVideoDecoded', callback: typeof AgoraRtcEvents.prototype.onFirstRemoteVideoDecoded)
+    on(type: 'firstRemoteVideoDecoded', callback: typeof AgoraRtcEvents.prototype.onFirstRemoteVideoDecoded): void
 
     /**
      * @event firstRemoteVideoFrame
      */
-    on(type: 'firstRemoteVideoFrame', callback: typeof AgoraRtcEvents.prototype.onFirstRemoteVideoFrame)
+    on(type: 'firstRemoteVideoFrame', callback: typeof AgoraRtcEvents.prototype.onFirstRemoteVideoFrame): void
 
     /**
      * @deprecated
      *
      * @event user-mute-audio
      */
-    on(type: 'user-mute-audio', callback: typeof AgoraRtcEvents.prototype.onUserMuteAudio)
+    on(type: 'user-mute-audio', callback: typeof AgoraRtcEvents.prototype.onUserMuteAudio): void
 
     /**
      * @deprecated
      *
      * @event userMuteAudio
      */
-    on(type: 'userMuteAudio', callback: typeof AgoraRtcEvents.prototype.onUserMuteAudio)
+    on(type: 'userMuteAudio', callback: typeof AgoraRtcEvents.prototype.onUserMuteAudio): void
 
     /**
      * @event userMuteVideo
      */
-    on(type: 'userMuteVideo', callback: typeof AgoraRtcEvents.prototype.onUserMuteVideo)
+    on(type: 'userMuteVideo', callback: typeof AgoraRtcEvents.prototype.onUserMuteVideo): void
 
     /**
      * @deprecated
      *
      * @event userEnableVideo
      */
-    on(type: 'userEnableVideo', callback: typeof AgoraRtcEvents.prototype.onUserEnableVideo)
+    on(type: 'userEnableVideo', callback: typeof AgoraRtcEvents.prototype.onUserEnableVideo): void
 
     /**
      * @event audioDeviceStateChanged
      */
-    on(type: 'audioDeviceStateChanged', callback: typeof AgoraRtcEvents.prototype.onAudioDeviceStateChanged)
+    on(type: 'audioDeviceStateChanged', callback: typeof AgoraRtcEvents.prototype.onAudioDeviceStateChanged): void
 
     /**
      * @event audioDeviceVolumeChanged
      */
-    on(type: 'audioDeviceVolumeChanged', callback: typeof AgoraRtcEvents.prototype.onAudioDeviceVolumeChanged)
+    on(type: 'audioDeviceVolumeChanged', callback: typeof AgoraRtcEvents.prototype.onAudioDeviceVolumeChanged): void
 
     /**
      * @event cameraReady
      */
-    on(type: 'cameraReady', callback: typeof AgoraRtcEvents.prototype.onCameraReady)
+    on(type: 'cameraReady', callback: typeof AgoraRtcEvents.prototype.onCameraReady): void
 
     /**
      * @event cameraFocusAreaChanged
      */
-    on(type: 'cameraFocusAreaChanged', callback: typeof AgoraRtcEvents.prototype.onCameraFocusAreaChanged)
+    on(type: 'cameraFocusAreaChanged', callback: typeof AgoraRtcEvents.prototype.onCameraFocusAreaChanged): void
 
     /**
      * @event facePositionChanged
      */
-    on(type: 'facePositionChanged', callback: typeof AgoraRtcEvents.prototype.onFacePositionChanged)
+    on(type: 'facePositionChanged', callback: typeof AgoraRtcEvents.prototype.onFacePositionChanged): void
 
     /**
      * @event cameraExposureAreaChanged
      */
-    on(type: 'cameraExposureAreaChanged', callback: typeof AgoraRtcEvents.prototype.onCameraExposureAreaChanged)
+    on(type: 'cameraExposureAreaChanged', callback: typeof AgoraRtcEvents.prototype.onCameraExposureAreaChanged): void
 
     /**
      * @event audioMixingFinished
      */
-    on(type: 'audioMixingFinished', callback: typeof AgoraRtcEvents.prototype.onAudioMixingFinished)
+    on(type: 'audioMixingFinished', callback: typeof AgoraRtcEvents.prototype.onAudioMixingFinished): void
 
     /**
      * @event audioMixingStateChanged
      */
-    on(type: 'audioMixingStateChanged', callback: typeof AgoraRtcEvents.prototype.onAudioMixingStateChanged)
+    on(type: 'audioMixingStateChanged', callback: typeof AgoraRtcEvents.prototype.onAudioMixingStateChanged): void
 
     /**
      * @event remoteAudioMixingBegin
      */
-    on(type: 'remoteAudioMixingBegin', callback: typeof AgoraRtcEvents.prototype.onRemoteAudioMixingBegin)
+    on(type: 'remoteAudioMixingBegin', callback: typeof AgoraRtcEvents.prototype.onRemoteAudioMixingBegin): void
 
     /**
      * @event remoteAudioMixingEnd
      */
-    on(type: 'remoteAudioMixingEnd', callback: typeof AgoraRtcEvents.prototype.onRemoteAudioMixingEnd)
+    on(type: 'remoteAudioMixingEnd', callback: typeof AgoraRtcEvents.prototype.onRemoteAudioMixingEnd): void
 
     /**
      * @event audioEffectFinished
      */
-    on(type: 'audioEffectFinished', callback: typeof AgoraRtcEvents.prototype.onAudioEffectFinished)
+    on(type: 'audioEffectFinished', callback: typeof AgoraRtcEvents.prototype.onAudioEffectFinished): void
 
     /**
      * @deprecated
      *
      * @event firstRemoteAudioDecoded
      */
-    on(type: 'firstRemoteAudioDecoded', callback: typeof AgoraRtcEvents.prototype.onFirstRemoteAudioDecoded)
+    on(type: 'firstRemoteAudioDecoded', callback: typeof AgoraRtcEvents.prototype.onFirstRemoteAudioDecoded): void
 
     /**
      * @event videoDeviceStateChanged
      */
-    on(type: 'videoDeviceStateChanged', callback: typeof AgoraRtcEvents.prototype.onVideoDeviceStateChanged)
+    on(type: 'videoDeviceStateChanged', callback: typeof AgoraRtcEvents.prototype.onVideoDeviceStateChanged): void
 
     /**
      * @event localVideoStateChanged
      */
-    on(type: 'localVideoStateChanged', callback: typeof AgoraRtcEvents.prototype.onLocalVideoStateChanged)
+    on(type: 'localVideoStateChanged', callback: typeof AgoraRtcEvents.prototype.onLocalVideoStateChanged): void
 
     /**
      * @event videoSizeChanged
      */
-    on(type: 'videoSizeChanged', callback: typeof AgoraRtcEvents.prototype.onVideoSizeChanged)
+    on(type: 'videoSizeChanged', callback: typeof AgoraRtcEvents.prototype.onVideoSizeChanged): void
 
     /**
      * @event remoteVideoStateChanged
      */
-    on(type: 'remoteVideoStateChanged', callback: typeof AgoraRtcEvents.prototype.onRemoteVideoStateChanged)
+    on(type: 'remoteVideoStateChanged', callback: typeof AgoraRtcEvents.prototype.onRemoteVideoStateChanged): void
 
     /**
      * @deprecated
      *
      * @event userEnableLocalVideo
      */
-    on(type: 'userEnableLocalVideo', callback: typeof AgoraRtcEvents.prototype.onUserEnableLocalVideo)
+    on(type: 'userEnableLocalVideo', callback: typeof AgoraRtcEvents.prototype.onUserEnableLocalVideo): void
 
     /**
      * @event streamMessage
      */
-    on(type: 'streamMessage', callback: typeof AgoraRtcEvents.prototype.onStreamMessage)
+    on(type: 'streamMessage', callback: typeof AgoraRtcEvents.prototype.onStreamMessage): void
 
     /**
      * @event streamMessageError
      */
-    on(type: 'streamMessageError', callback: typeof AgoraRtcEvents.prototype.onStreamMessageError)
+    on(type: 'streamMessageError', callback: typeof AgoraRtcEvents.prototype.onStreamMessageError): void
 
     /**
      * @event mediaEngineLoadSuccess
      */
-    on(type: 'mediaEngineLoadSuccess', callback: typeof AgoraRtcEvents.prototype.onMediaEngineLoadSuccess)
+    on(type: 'mediaEngineLoadSuccess', callback: typeof AgoraRtcEvents.prototype.onMediaEngineLoadSuccess): void
 
     /**
      * @event mediaEngineStartCallSuccess
      */
-    on(type: 'mediaEngineStartCallSuccess', callback: typeof AgoraRtcEvents.prototype.onMediaEngineStartCallSuccess)
+    on(type: 'mediaEngineStartCallSuccess', callback: typeof AgoraRtcEvents.prototype.onMediaEngineStartCallSuccess): void
 
     /**
      * @event channelMediaRelayStateChanged
      */
-    on(type: 'channelMediaRelayStateChanged', callback: typeof AgoraRtcEvents.prototype.onChannelMediaRelayStateChanged)
+    on(type: 'channelMediaRelayStateChanged', callback: typeof AgoraRtcEvents.prototype.onChannelMediaRelayStateChanged): void
 
     /**
      * @event channelMediaRelayEvent
      */
-    on(type: 'channelMediaRelayEvent', callback: typeof AgoraRtcEvents.prototype.onChannelMediaRelayEvent)
+    on(type: 'channelMediaRelayEvent', callback: typeof AgoraRtcEvents.prototype.onChannelMediaRelayEvent): void
 
     /**
      * @deprecated
      *
      * @event firstLocalAudioFrame
      */
-    on(type: 'firstLocalAudioFrame', callback: typeof AgoraRtcEvents.prototype.onFirstLocalAudioFrame)
+    on(type: 'firstLocalAudioFrame', callback: typeof AgoraRtcEvents.prototype.onFirstLocalAudioFrame): void
 
     /**
      * @event firstLocalAudioFramePublished
      */
-    on(type: 'firstLocalAudioFramePublished', callback: typeof AgoraRtcEvents.prototype.onFirstLocalAudioFramePublished)
+    on(type: 'firstLocalAudioFramePublished', callback: typeof AgoraRtcEvents.prototype.onFirstLocalAudioFramePublished): void
 
     /**
      * @deprecated
      *
      * @event firstRemoteAudioFrame
      */
-    on(type: 'firstRemoteAudioFrame', callback: typeof AgoraRtcEvents.prototype.onFirstRemoteAudioFrame)
+    on(type: 'firstRemoteAudioFrame', callback: typeof AgoraRtcEvents.prototype.onFirstRemoteAudioFrame): void
 
     /**
      * @event rtmpStreamingStateChanged
      */
-    on(type: 'rtmpStreamingStateChanged', callback: typeof AgoraRtcEvents.prototype.onRtmpStreamingStateChanged)
+    on(type: 'rtmpStreamingStateChanged', callback: typeof AgoraRtcEvents.prototype.onRtmpStreamingStateChanged): void
 
     /**
      * @event rtmpStreamingEvent
      */
-    on(type: 'rtmpStreamingEvent', callback: typeof AgoraRtcEvents.prototype.onRtmpStreamingEvent)
+    on(type: 'rtmpStreamingEvent', callback: typeof AgoraRtcEvents.prototype.onRtmpStreamingEvent): void
 
     /**
      * @deprecated
      *
      * @event streamPublished
      */
-    on(type: 'streamPublished', callback: typeof AgoraRtcEvents.prototype.onStreamPublished)
+    on(type: 'streamPublished', callback: typeof AgoraRtcEvents.prototype.onStreamPublished): void
 
     /**
      * @deprecated
      *
      * @event streamUnpublished
      */
-    on(type: 'streamUnpublished', callback: typeof AgoraRtcEvents.prototype.onStreamUnpublished)
+    on(type: 'streamUnpublished', callback: typeof AgoraRtcEvents.prototype.onStreamUnpublished): void
 
     /**
      * @event transcodingUpdated
      */
-    on(type: 'transcodingUpdated', callback: typeof AgoraRtcEvents.prototype.onTranscodingUpdated)
+    on(type: 'transcodingUpdated', callback: typeof AgoraRtcEvents.prototype.onTranscodingUpdated): void
 
     /**
      * @event streamInjectedStatus
      */
-    on(type: 'streamInjectedStatus', callback: typeof AgoraRtcEvents.prototype.onStreamInjectedStatus)
+    on(type: 'streamInjectedStatus', callback: typeof AgoraRtcEvents.prototype.onStreamInjectedStatus): void
 
     /**
      * @deprecated
      *
      * @event audio-routing-changed
      */
-    on(type: 'audio-routing-changed', callback: typeof AgoraRtcEvents.prototype.onAudioRouteChanged)
+    on(type: 'audio-routing-changed', callback: typeof AgoraRtcEvents.prototype.onAudioRouteChanged): void
 
     /**
      * @event audioRouteChanged
      */
-    on(type: 'audioRouteChanged', callback: typeof AgoraRtcEvents.prototype.onAudioRouteChanged)
+    on(type: 'audioRouteChanged', callback: typeof AgoraRtcEvents.prototype.onAudioRouteChanged): void
 
     /**
      * @event localPublishFallbackToAudioOnly
      */
-    on(type: 'localPublishFallbackToAudioOnly', callback: typeof AgoraRtcEvents.prototype.onLocalPublishFallbackToAudioOnly)
+    on(type: 'localPublishFallbackToAudioOnly', callback: typeof AgoraRtcEvents.prototype.onLocalPublishFallbackToAudioOnly): void
 
     /**
      * @event remoteSubscribeFallbackToAudioOnly
      */
-    on(type: 'remoteSubscribeFallbackToAudioOnly', callback: typeof AgoraRtcEvents.prototype.onRemoteSubscribeFallbackToAudioOnly)
+    on(type: 'remoteSubscribeFallbackToAudioOnly', callback: typeof AgoraRtcEvents.prototype.onRemoteSubscribeFallbackToAudioOnly): void
 
     /**
      * @deprecated
      *
      * @event remoteAudioTransportStats
      */
-    on(type: 'remoteAudioTransportStats', callback: typeof AgoraRtcEvents.prototype.onRemoteAudioTransportStats)
+    on(type: 'remoteAudioTransportStats', callback: typeof AgoraRtcEvents.prototype.onRemoteAudioTransportStats): void
 
     /**
      * @deprecated
      *
      * @event remoteVideoTransportStats
      */
-    on(type: 'remoteVideoTransportStats', callback: typeof AgoraRtcEvents.prototype.onRemoteVideoTransportStats)
+    on(type: 'remoteVideoTransportStats', callback: typeof AgoraRtcEvents.prototype.onRemoteVideoTransportStats): void
 
     /**
      * @deprecated
      *
      * @event microphoneEnabled
      */
-    on(type: 'microphoneEnabled', callback: typeof AgoraRtcEvents.prototype.onMicrophoneEnabled)
+    on(type: 'microphoneEnabled', callback: typeof AgoraRtcEvents.prototype.onMicrophoneEnabled): void
 
     /**
      * @event connectionStateChanged
      */
-    on(type: 'connectionStateChanged', callback: typeof AgoraRtcEvents.prototype.onConnectionStateChanged)
+    on(type: 'connectionStateChanged', callback: typeof AgoraRtcEvents.prototype.onConnectionStateChanged): void
 
     /**
      * @event networkTypeChanged
      */
-    on(type: 'networkTypeChanged', callback: typeof AgoraRtcEvents.prototype.onNetworkTypeChanged)
+    on(type: 'networkTypeChanged', callback: typeof AgoraRtcEvents.prototype.onNetworkTypeChanged): void
 
     /**
      * @event localUserRegistered
      */
-    on(type: 'localUserRegistered', callback: typeof AgoraRtcEvents.prototype.onLocalUserRegistered)
+    on(type: 'localUserRegistered', callback: typeof AgoraRtcEvents.prototype.onLocalUserRegistered): void
 
     /**
      * @event userInfoUpdated
      */
-    on(type: 'userInfoUpdated', callback: typeof AgoraRtcEvents.prototype.onUserInfoUpdated)
+    on(type: 'userInfoUpdated', callback: typeof AgoraRtcEvents.prototype.onUserInfoUpdated): void
 
     /**
      * @event metadataReceived
      */
-    on(type: 'metadataReceived', callback: typeof AgoraRtcEvents.prototype.onMetadataReceived)
+    on(type: 'metadataReceived', callback: typeof AgoraRtcEvents.prototype.onMetadataReceived): void
 }
 
 (window as any).agora = agora

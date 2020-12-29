@@ -1833,11 +1833,11 @@ var agora;
                 event.emit('firstRemoteVideoDecoded', evt.stream.getId(), stats.videoReceiveResolutionWidth, stats.videoReceiveResolutionHeight, 0);
             });
         });
-        client.on('stream-published', function (evt) {
+        client.on('stream-published', function (_) {
             event.emit('firstLocalAudioFramePublished', 0);
             event.emit('firstLocalVideoFramePublished', 0);
         });
-        client.on('stream-unpublished', function (evt) {
+        client.on('stream-unpublished', function (_) {
             event.emit('localAudioStateChanged', agora.LOCAL_AUDIO_STREAM_STATE.LOCAL_AUDIO_STREAM_STATE_STOPPED, agora.LOCAL_AUDIO_STREAM_ERROR.LOCAL_AUDIO_STREAM_ERROR_OK);
             event.emit('localVideoStateChanged', agora.LOCAL_VIDEO_STREAM_STATE.LOCAL_VIDEO_STREAM_STATE_STOPPED, agora.LOCAL_VIDEO_STREAM_ERROR.LOCAL_VIDEO_STREAM_ERROR_OK);
         });
@@ -1880,9 +1880,9 @@ var agora;
         client.on('unmute-video', function (evt) {
             event.emit('userMuteVideo', evt.uid, false);
         });
-        client.on('crypt-error', function (evt) {
+        client.on('crypt-error', function (_) {
         });
-        client.on('client-banned', function (evt) {
+        client.on('client-banned', function (_) {
             event.emit('connection-banned');
             event.emit('connectionBanned');
         });
@@ -1892,7 +1892,7 @@ var agora;
         client.on('volume-indicator', function (evt) {
             var speakers = [];
             var sumVolume = 0;
-            evt.attr.forEach(function (_a, index) {
+            evt.attr.forEach(function (_a, _) {
                 var uid = _a.uid, level = _a.level;
                 speakers.push({ uid: uid, volume: level });
                 sumVolume += level;
@@ -1909,16 +1909,16 @@ var agora;
         client.on('liveStreamingStopped', function (evt) {
             event.emit('rtmpStreamingStateChanged', evt.url, agora.RTMP_STREAM_PUBLISH_STATE.RTMP_STREAM_PUBLISH_STATE_IDLE, null);
         });
-        client.on('liveTranscodingUpdated', function (evt) {
+        client.on('liveTranscodingUpdated', function (_) {
             event.emit('transcodingUpdated');
         });
         client.on('streamInjectedStatus', function (evt) {
             event.emit('streamInjectedStatus', evt.url, evt.uid, evt.status);
         });
-        client.on('onTokenPrivilegeWillExpire', function (evt) {
+        client.on('onTokenPrivilegeWillExpire', function (_) {
             event.emit('tokenPrivilegeWillExpire');
         });
-        client.on('onTokenPrivilegeDidExpire', function (evt) {
+        client.on('onTokenPrivilegeDidExpire', function (_) {
         });
         client.on('error', function (evt) {
             event.emit('error', agora.ERROR_CODE_TYPE.ERR_FAILED, evt.reason);
@@ -1932,9 +1932,9 @@ var agora;
         client.on('playout-device-changed', function (evt) {
             event.emit('playoutDeviceChanged', evt.state, evt.device);
         });
-        client.on('camera-changed', function (evt) {
+        client.on('camera-changed', function (_) {
         });
-        client.on('stream-type-changed', function (evt) {
+        client.on('stream-type-changed', function (_) {
         });
         client.on('connection-state-change', function (evt) {
             var state = {
@@ -1947,9 +1947,9 @@ var agora;
                 event.emit('connectionStateChanged', state[evt.curState], null);
             }
         });
-        client.on('stream-reconnect-start', function (evt) {
+        client.on('stream-reconnect-start', function (_) {
         });
-        client.on('stream-reconnect-end', function (evt) {
+        client.on('stream-reconnect-end', function (_) {
         });
         client.on('client-role-changed', function (evt) {
             event.emit('client-role-changed', null, evt.role);
@@ -1967,7 +1967,7 @@ var agora;
         client.on('stream-fallback', function (evt) {
             event.emit('remoteSubscribeFallbackToAudioOnly', evt.uid, evt.attr === 1);
         });
-        client.on('stream-updated', function (evt) {
+        client.on('stream-updated', function (_) {
         });
         client.on('exception', function (evt) {
             event.emit('warning', evt.code, evt.msg);
