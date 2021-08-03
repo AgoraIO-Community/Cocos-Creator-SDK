@@ -266,14 +266,27 @@ LOCAL_MODULE := agora-fdkaac
 LOCAL_SRC_FILES := $(LOCAL_PATH)/agora/$(TARGET_ARCH_ABI)/libagora-fdkaac.so
 include $(PREBUILT_SHARED_LIBRARY)
 include $(CLEAR_VARS)
-LOCAL_MODULE := agora-ffmpeg
-LOCAL_SRC_FILES := $(LOCAL_PATH)/agora/$(TARGET_ARCH_ABI)/libagora-ffmpeg.so
+LOCAL_MODULE := agora_ai_denoise_extension
+LOCAL_SRC_FILES := $(LOCAL_PATH)/agora/$(TARGET_ARCH_ABI)/libagora_ai_denoise_extension.so
 include $(PREBUILT_SHARED_LIBRARY)
 include $(CLEAR_VARS)
 LOCAL_MODULE := agora-core
 LOCAL_SRC_FILES := $(LOCAL_PATH)/agora/$(TARGET_ARCH_ABI)/libagora-core.so
 include $(PREBUILT_SHARED_LIBRARY)
-
+${params.sdkType === 'video'  ? `
+include $(CLEAR_VARS)
+LOCAL_MODULE := agora-ffmpeg
+LOCAL_SRC_FILES := $(LOCAL_PATH)/agora/$(TARGET_ARCH_ABI)/libagora-ffmpeg.so
+include $(PREBUILT_SHARED_LIBRARY)
+include $(CLEAR_VARS)
+LOCAL_MODULE := agora_dav1d_extension
+LOCAL_SRC_FILES := $(LOCAL_PATH)/agora/$(TARGET_ARCH_ABI)/libagora_dav1d_extension.so
+include $(PREBUILT_SHARED_LIBRARY)
+include $(CLEAR_VARS)
+LOCAL_MODULE := agora_jnd_extension
+LOCAL_SRC_FILES := $(LOCAL_PATH)/agora/$(TARGET_ARCH_ABI)/libagora_jnd_extension.so
+include $(PREBUILT_SHARED_LIBRARY)
+` : ''}
 endif
 #=======================================
         `;
@@ -300,7 +313,8 @@ LOCAL_C_INCLUDES += ../../Classes/agora \\
         ../../Classes/agora/rtcChannel \\
         ../../Classes/agora/rtcEngine \\
         ../../Classes/agora/test
-LOCAL_SHARED_LIBRARIES := agora-rtc-sdk agora-rtc-sdk agora-soundtouch agora-mpg123 agora-fdkaac agora-ffmpeg agora-core
+LOCAL_SHARED_LIBRARIES := agora-rtc-sdk agora-rtc-sdk agora-soundtouch agora-mpg123 agora-fdkaac agora_ai_denoise_extension agora-core${params.sdkType === 'video' 
+ ? ' agora-ffmpeg agora_dav1d_extension agora_jnd_extension' : ''}
 endif
 #======================================
         ` : `
@@ -326,7 +340,8 @@ LOCAL_C_INCLUDES += ../../../Classes/agora \\
         ../../../Classes/agora/rtcChannel \\
         ../../../Classes/agora/rtcEngine \\
         ../../../Classes/agora/test
-LOCAL_SHARED_LIBRARIES := agora-rtc-sdk agora-rtc-sdk agora-soundtouch agora-mpg123 agora-fdkaac agora-ffmpeg agora-core
+LOCAL_SHARED_LIBRARIES := agora-rtc-sdk agora-rtc-sdk agora-soundtouch agora-mpg123 agora-fdkaac agora_ai_denoise_extension agora-core${params.sdkType === 'video' 
+ ? ' agora-ffmpeg agora_dav1d_extension agora_jnd_extension' : ''}
 endif
 #======================================
         `;
