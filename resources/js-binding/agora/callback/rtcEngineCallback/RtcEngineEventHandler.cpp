@@ -933,15 +933,15 @@ void RtcEngineEventHandler::onConnectionStateChanged(
 }
 
 void RtcEngineEventHandler::onAudioMixingStateChanged(
-    AUDIO_MIXING_STATE_TYPE state, AUDIO_MIXING_ERROR_TYPE errorCode) {
+    AUDIO_MIXING_STATE_TYPE state, AUDIO_MIXING_REASON_TYPE reason) {
   if (cEngineEventHandler && cEngineEventHandler->onAudioMixingStateChanged)
-    cEngineEventHandler->onAudioMixingStateChanged(int(state), int(errorCode));
+    cEngineEventHandler->onAudioMixingStateChanged(int(state), int(reason));
 
   if (!mEventHandler)
     return;
 
   mEventHandler->functionCall<int, int>("onAudioMixingStateChanged", state,
-                                        errorCode);
+                                        reason);
 }
 
 void RtcEngineEventHandler::onFirstRemoteAudioDecoded(rtc::uid_t uid,

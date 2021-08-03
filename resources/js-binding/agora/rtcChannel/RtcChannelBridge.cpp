@@ -213,6 +213,22 @@ int RtcChannelBridge::callApi(API_TYPE apiType, const std::string &parameters) {
     ret = setDefaultMuteAllRemoteVideoStreams(mute);
   } break;
 
+  case MUTE_LOCAL_AUDIO_STREAM_IN_CHANNEL: {
+    bool mute;
+    get_parameter_bool(document, "mute", mute, ret);
+    CHECK_RET_ERROR(ret)
+
+    ret = muteLocalAudioStream(mute);
+  } break;
+
+  case MUTE_LOCAL_VIDEO_STREAM_IN_CHANNEL: {
+    bool mute;
+    get_parameter_bool(document, "mute", mute, ret);
+    CHECK_RET_ERROR(ret)
+
+    ret = muteLocalVideoStream(mute);
+  } break;
+
   case API_TYPE::MUTE_ALL_REMOTE_AUDIO_STREAMS: {
     bool mute;
     get_parameter_bool(document, "mute", mute, ret);
@@ -744,6 +760,18 @@ int RtcChannelBridge::setDefaultMuteAllRemoteVideoStreams(bool mute) {
   LOG_JSON(SET_DEFAULT_MUTE_ALL_REMOTE_VIDEO_STREAMS, CHANNEL_ID_KEY,
            channel->channelId(), "mute", mute);
   return channel->setDefaultMuteAllRemoteVideoStreams(mute);
+}
+
+int RtcChannelBridge::muteLocalAudioStream(bool mute) {
+  LOG_JSON(MUTE_LOCAL_AUDIO_STREAM_IN_CHANNEL, CHANNEL_ID_KEY,
+           channel->channelId(), "mute", mute);
+  return channel->muteLocalAudioStream(mute);
+}
+  
+int RtcChannelBridge::muteLocalVideoStream(bool mute) {
+  LOG_JSON(MUTE_LOCAL_VIDEO_STREAM_IN_CHANNEL, CHANNEL_ID_KEY,
+           channel->channelId(), "mute", mute);
+  return channel->muteLocalVideoStream(mute);
 }
 
 int RtcChannelBridge::muteAllRemoteAudioStreams(bool mute) {
