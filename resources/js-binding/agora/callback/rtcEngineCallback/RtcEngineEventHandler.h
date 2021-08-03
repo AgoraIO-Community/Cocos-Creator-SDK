@@ -199,10 +199,6 @@ typedef void(__stdcall *FUNC_OnRtmpStreamingStateChanged)(const char *url,
                                                           int state,
                                                           int errCode);
 typedef void(__stdcall *FUNC_OnNetworkTypeChanged)(int networkType);
-// typedef void (__stdcall *FUNC_OnVideoEncodedFrame)(int codecType, int width, 
-//                                          int height, const uint8_t* buffer, 
-//                                          unsigned int length, int frameType, 
-//                                          int rotation, int64_t renderTimeMs);
 typedef void(__stdcall *FUNC_OnLastmileProbeResult)(
     int state, unsigned int upLinkPacketLossRate, unsigned int upLinkjitter,
     unsigned int upLinkAvailableBandwidth, unsigned int downLinkPacketLossRate,
@@ -493,10 +489,6 @@ typedef void (*FUNC_OnAudioMixingStateChanged)(int audioMixingStateType,
 typedef void (*FUNC_OnFirstRemoteAudioDecoded)(rtc::uid_t uid, int elapsed);
 typedef void (*FUNC_OnLocalVideoStateChanged)(int localVideoState, int error);
 typedef void (*FUNC_OnNetworkTypeChanged)(int networkType);
-// typedef void (*FUNC_OnVideoEncodedFrame)(int codecType, int width, 
-//                                          int height, const uint8_t* buffer, 
-//                                          unsigned int length, int frameType, 
-//                                          int rotation, int64_t renderTimeMs);
 typedef void (*FUNC_OnLastmileProbeResult)(
     int state, unsigned int upLinkPacketLossRate, unsigned int upLinkjitter,
     unsigned int upLinkAvailableBandwidth, unsigned int downLinkPacketLossRate,

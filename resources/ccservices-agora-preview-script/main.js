@@ -6,8 +6,8 @@ const {
 } = require('path');
 
 const Paths = {
-    sdkPath: join(__dirname, 'AgoraRTCSDK-3.1.2.js'),
-    sdkURL: 'ccservices-scripts/AgoraRTCSDK-3.1.2.js',
+    sdkPath: join(__dirname, 'AgoraRTCSDK-3.6.2.js'),
+    sdkURL: 'ccservices-scripts/AgoraRTCSDK-3.6.2.js',
 };
 
 module.exports = {

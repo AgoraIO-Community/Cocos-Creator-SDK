@@ -1,14 +1,14 @@
 {
-    "version": "1.3.4_6.1",
+    "version": "1.3.2_3.4.6_3.6.2",
     "author": "Cocos",
     "email": "mx2913@qq.com",
-    "upgrade": "解决 ios15 crash",
+    "upgrade": "修复iOS15不兼容问题",
     "upgrade_en": "Add video module to optimize performance",
     "sdk_vers": {
         "ios-video": "3.4.6",
         "ios-audio": "3.4.6",
         "android-video": "3.4.6",
         "android-audio": "3.4.6",
-        "h5-audio": "3.4.6"
+        "h5-audio": "3.6.2"
     }
 }
