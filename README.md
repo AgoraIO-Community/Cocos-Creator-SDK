@@ -29,11 +29,11 @@ Check the end of document if you want to use App ID with the certificate.
   Sample as `1.2.1_3.1.2_3.2.1`，you need to download the `3.1.2` version of SDK.
   - SDK link sample:
     - Audio:
-      - https://download.agora.io/sdk/release/Agora_Native_SDK_for_Android_v3_1_2_VOICE.zip
-      - https://download.agora.io/sdk/release/Agora_Native_SDK_for_iOS_v3_1_2_VOICE.zip
+      - https://download.agora.io/sdk/release/Agora_Native_SDK_for_Android_v3_4_6_VOICE.zip
+      - https://download.agora.io/sdk/release/Agora_Native_SDK_for_iOS_v3_4_6_VOICE.zip
     - Video:
-      - https://download.agora.io/sdk/release/Agora_Native_SDK_for_Android_v3_1_2_FULL.zip
-      - https://download.agora.io/sdk/release/Agora_Native_SDK_for_iOS_v3_1_2_FULL.zip
+      - https://download.agora.io/sdk/release/Agora_Native_SDK_for_Android_v3_4_6_FULL.zip
+      - https://download.agora.io/sdk/release/Agora_Native_SDK_for_iOS_v3_4_6_FULL.zip
 * Extract SDK to the `resources/sdk` folder（Audio and Video in different folder）.
   - `android/agora/audio` and `android/agora/video` folders save the `.so` file，`android/lib/audio` and `android/lib/video` save the `.jar` file.
   - `ios/agora/audio` and `ios/agora/video` folders save the `.framework` file. (Not need, use Cocoapods instead of now)

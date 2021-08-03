@@ -57,6 +57,20 @@ int RtcEngineBridge::callApi(API_TYPE apiType, const std::string &parameters) {
     ret = setClientRole(CLIENT_ROLE_TYPE(role));
   } break;
 
+  case SET_CLIENT_ROLE_2: {
+    int role;
+    get_parameter_int(document, "role", role, ret);
+    CHECK_RET_ERROR(ret)
+
+    int audienceLatencyLevel;
+    get_parameter_int(document, "audienceLatencyLevel", audienceLatencyLevel, ret);
+
+    ClientRoleOptions options;
+    options.audienceLatencyLevel = AUDIENCE_LATENCY_LEVEL_TYPE(audienceLatencyLevel);
+
+    ret = setClientRole(CLIENT_ROLE_TYPE(role), options);
+  } break;
+
   case JOIN_CHANNEL: {
     std::string token;
     get_parameter_string(document, "token", token, ret);
@@ -77,6 +91,48 @@ int RtcEngineBridge::callApi(API_TYPE apiType, const std::string &parameters) {
     ret = joinChannel(token.c_str(), channelId.c_str(), info.c_str(), uid);
   } break;
 
+  case JOIN_CHANNEL_2: {
+    std::string token;
+    get_parameter_string(document, "token", token, ret);
+    CHECK_RET_ERROR(ret)
+
+    std::string channelId;
+    get_parameter_string(document, "channelId", channelId, ret);
+    CHECK_RET_ERROR(ret)
+
+    std::string info;
+    get_parameter_string(document, "info", info, ret);
+    CHECK_RET_ERROR(ret)
+
+    rtc::uid_t uid;
+    get_parameter_uint(document, "uid", uid, ret);
+    CHECK_RET_ERROR(ret)
+
+    bool autoSubscribeAudio;
+    get_parameter_bool(document, "autoSubscribeAudio", autoSubscribeAudio, ret);
+    CHECK_RET_ERROR(ret)
+
+    bool autoSubscribeVideo;
+    get_parameter_bool(document, "autoSubscribeVideo", autoSubscribeVideo, ret);
+    CHECK_RET_ERROR(ret)
+
+    bool publishLocalAudio;
+    get_parameter_bool(document, "publishLocalAudio", publishLocalAudio, ret);
+    CHECK_RET_ERROR(ret)
+
+    bool publishLocalVideo;
+    get_parameter_bool(document, "publishLocalVideo", publishLocalVideo, ret);
+    CHECK_RET_ERROR(ret)
+
+    ChannelMediaOptions options;
+    options.autoSubscribeAudio = autoSubscribeAudio;
+    options.autoSubscribeVideo = autoSubscribeVideo;
+    options.publishLocalAudio = publishLocalAudio;
+    options.publishLocalVideo = publishLocalVideo;
+
+    ret = joinChannel(token.c_str(), channelId.c_str(), info.c_str(), uid, options);
+  } break;
+
   case SWITCH_CHANNEL: {
     std::string token;
     get_parameter_string(document, "token", token, ret);
@@ -87,6 +143,40 @@ int RtcEngineBridge::callApi(API_TYPE apiType, const std::string &parameters) {
     CHECK_RET_ERROR(ret)
 
     ret = switchChannel(token.c_str(), channelId.c_str());
+  } break;
+
+  case SWITCH_CHANNEL_2: {
+    std::string token;
+    get_parameter_string(document, "token", token, ret);
+    CHECK_RET_ERROR(ret)
+
+    std::string channelId;
+    get_parameter_string(document, "channelId", channelId, ret);
+    CHECK_RET_ERROR(ret)
+
+    bool autoSubscribeAudio;
+    get_parameter_bool(document, "autoSubscribeAudio", autoSubscribeAudio, ret);
+    CHECK_RET_ERROR(ret)
+
+    bool autoSubscribeVideo;
+    get_parameter_bool(document, "autoSubscribeVideo", autoSubscribeVideo, ret);
+    CHECK_RET_ERROR(ret)
+
+    bool publishLocalAudio;
+    get_parameter_bool(document, "publishLocalAudio", publishLocalAudio, ret);
+    CHECK_RET_ERROR(ret)
+
+    bool publishLocalVideo;
+    get_parameter_bool(document, "publishLocalVideo", publishLocalVideo, ret);
+    CHECK_RET_ERROR(ret)
+
+    ChannelMediaOptions options;
+    options.autoSubscribeAudio = autoSubscribeAudio;
+    options.autoSubscribeVideo = autoSubscribeVideo;
+    options.publishLocalAudio = publishLocalAudio;
+    options.publishLocalVideo = publishLocalVideo;
+
+    ret = switchChannel(token.c_str(), channelId.c_str(), options);
   } break;
 
   case LEAVE_CHANNEL: {
@@ -144,6 +234,14 @@ int RtcEngineBridge::callApi(API_TYPE apiType, const std::string &parameters) {
 
   case STOP_ECHO_TEST: {
     ret = stopEchoTest();
+  } break;
+
+  case SET_CLOUD_PROXY: {
+    int proxyType;
+    get_parameter_int(document, "proxyType", proxyType, ret);
+    CHECK_RET_ERROR(ret)
+
+    ret = setCloudProxy(CLOUD_PROXY_TYPE(proxyType));
   } break;
 
   case ENABLE_VIDEO: {
@@ -440,6 +538,26 @@ int RtcEngineBridge::callApi(API_TYPE apiType, const std::string &parameters) {
                               AUDIO_RECORDING_QUALITY_TYPE(quality));
   } break;
 
+  case START_AUDIO_RECORDING_3: {
+    std::string filePath;
+    get_parameter_string(document, "filePath", filePath, ret);
+    CHECK_RET_ERROR(ret)
+
+    int recordingQuality;
+    get_parameter_int(document, "recordingQuality", recordingQuality, ret);
+    CHECK_RET_ERROR(ret)
+
+    int recordingPosition;
+    get_parameter_int(document, "recordingPosition", recordingPosition, ret);
+    CHECK_RET_ERROR(ret)
+
+    AudioRecordingConfiguration config;
+    config.filePath = filePath.c_str();
+    config.recordingQuality = AUDIO_RECORDING_QUALITY_TYPE(recordingQuality);
+    config.recordingPosition = AUDIO_RECORDING_POSITION(recordingPosition);
+    ret = startAudioRecording(config);
+  } break;
+ 
   case STOP_AUDIO_RECORDING: {
     ret = stopAudioRecording();
   } break;
@@ -575,6 +693,14 @@ int RtcEngineBridge::callApi(API_TYPE apiType, const std::string &parameters) {
     CHECK_RET_ERROR(ret)
 
     ret = adjustPlaybackSignalVolume(volume);
+  } break;
+
+  case ADJUST_LOOPBACK_RECORDING_SIGNAL_VOLUME: {
+    int volume;
+    get_parameter_int(document, "volume", volume, ret);
+    CHECK_RET_ERROR(ret)
+
+    ret = adjustLoopbackRecordingSignalVolume(volume);
   } break;
 
   case ENABLE_WEB_SDK_INTEROPER_ABILITY: {
@@ -1121,6 +1247,31 @@ int RtcEngineBridge::callApi(API_TYPE apiType, const std::string &parameters) {
     ret = setBeautyEffectOptions(enabled, beautyOptions);
   } break;
 
+  case ENABLE_VIRTUAL_BACKGROUND: {
+    bool enabled;
+    get_parameter_bool(document, "enabled", enabled, ret);
+    CHECK_RET_ERROR(ret)
+
+    int background_source_type;
+    get_parameter_int(document, "background_source_type", background_source_type, ret);
+    CHECK_RET_ERROR(ret)
+
+    unsigned int color;
+    get_parameter_uint(document, "color", color, ret);
+    CHECK_RET_ERROR(ret)
+
+    std::string source;
+    get_parameter_string(document, "source", source, ret);
+    CHECK_RET_ERROR(ret)
+
+    VirtualBackgroundSource backgroundSource;
+    backgroundSource.background_source_type = VirtualBackgroundSource::BACKGROUND_SOURCE_TYPE(background_source_type);
+    backgroundSource.color = color;
+    backgroundSource.source = source.c_str();
+
+    ret = enableVirtualBackground(enabled, backgroundSource);
+  } break;
+
   case ADD_INJECT_STREAM_URL: {
     std::string url;
     get_parameter_string(document, "url", url, ret);
@@ -1328,6 +1479,30 @@ int RtcEngineBridge::callApi_audioEffect(API_TYPE_AUDIO_EFFECT apiType,
     ret = startAudioMixing(filePath.c_str(), loopback, replace, cycle);
   } break;
 
+  case START_AUDIO_MIXING_2: {
+    std::string filePath;
+    get_parameter_string(document, "filePath", filePath, ret);
+    CHECK_RET_ERROR(ret)
+
+    bool loopback;
+    get_parameter_bool(document, "loopback", loopback, ret);
+    CHECK_RET_ERROR(ret)
+
+    bool replace;
+    get_parameter_bool(document, "replace", replace, ret);
+    CHECK_RET_ERROR(ret)
+
+    int cycle;
+    get_parameter_int(document, "cycle", cycle, ret);
+    CHECK_RET_ERROR(ret)
+
+    int startPos;
+    get_parameter_int(document, "startPos", startPos, ret);
+    CHECK_RET_ERROR(ret)
+
+    ret = startAudioMixing(filePath.c_str(), loopback, replace, cycle, startPos);
+  } break;
+
   case STOP_AUDIO_MIXING: {
     ret = stopAudioMixing();
   } break;
@@ -1390,6 +1565,14 @@ int RtcEngineBridge::callApi_audioEffect(API_TYPE_AUDIO_EFFECT apiType,
 
   case GET_AUDIO_MIXING_DURATION: {
     ret = getAudioMixingDuration();
+  } break;
+
+  case GET_AUDIO_MIXING_DURATION_2: {
+    std::string filePath;
+    get_parameter_string(document, "filePath", filePath, ret);
+    CHECK_RET_ERROR(ret)
+
+    ret = getAudioMixingDuration(filePath.c_str());
   } break;
 
   case GET_AUDIO_MIXING_CURRENT_POSITION: {
@@ -1461,6 +1644,43 @@ int RtcEngineBridge::callApi_audioEffect(API_TYPE_AUDIO_EFFECT apiType,
                      publish);
   } break;
 
+  case PLAY_EFFECT_2: {
+    int soundId;
+    get_parameter_int(document, "soundId", soundId, ret);
+    CHECK_RET_ERROR(ret)
+
+    std::string filePath;
+    get_parameter_string(document, "filePath", filePath, ret);
+    CHECK_RET_ERROR(ret)
+
+    int loopCount;
+    get_parameter_int(document, "loopCount", loopCount, ret);
+    CHECK_RET_ERROR(ret)
+
+    double pitch;
+    get_parameter_double(document, "pitch", pitch, ret);
+    CHECK_RET_ERROR(ret)
+
+    double pan;
+    get_parameter_double(document, "pan", pan, ret);
+    CHECK_RET_ERROR(ret)
+
+    int gain;
+    get_parameter_int(document, "gain", gain, ret);
+    CHECK_RET_ERROR(ret)
+
+    bool publish;
+    get_parameter_bool(document, "publish", publish, ret);
+    CHECK_RET_ERROR(ret)
+
+    int startPos;
+    get_parameter_int(document, "startPos", startPos, ret);
+    CHECK_RET_ERROR(ret)
+
+    ret = playEffect(soundId, filePath.c_str(), loopCount, pitch, pan, gain,
+                     publish, startPos);
+  } break;
+
   case STOP_EFFECT: {
     int soundId;
     get_parameter_int(document, "soundId", soundId, ret);
@@ -1517,6 +1737,42 @@ int RtcEngineBridge::callApi_audioEffect(API_TYPE_AUDIO_EFFECT apiType,
     ret = resumeAllEffects();
   } break;
 
+  case GET_EFFECT_DURATION: {
+    std::string filePath;
+    get_parameter_string(document, "filePath", filePath, ret);
+    CHECK_RET_ERROR(ret)
+
+    ret = getEffectDuration(filePath.c_str());
+  } break;
+
+  case SET_EFFECT_POSITION: {
+    int soundId;
+    get_parameter_int(document, "soundId", soundId, ret);
+    CHECK_RET_ERROR(ret)
+
+    int pos;
+    get_parameter_int(document, "pos", pos, ret);
+    CHECK_RET_ERROR(ret)
+
+    ret = setEffectPosition(soundId, pos);
+  } break;
+
+  case GET_EFFECT_CURRENT_POSITION: {
+    int soundId;
+    get_parameter_int(document, "soundId", soundId, ret);
+    CHECK_RET_ERROR(ret)
+    
+    ret = getEffectCurrentPosition(soundId);
+  } break;
+
+  case ENABLE_DEEPLEARNINGDENOISE: {
+    bool enable;
+    get_parameter_bool(document, "enable", enable, ret);
+    CHECK_RET_ERROR(ret)
+
+    ret = enableDeepLearningDenoise(enable);
+  } break;
+
   case ENABLE_SOUND_POSITION_INDICATION: {
     bool enabled;
     get_parameter_bool(document, "enabled", enabled, ret);
@@ -1567,6 +1823,62 @@ int RtcEngineBridge::callApi_audioEffect(API_TYPE_AUDIO_EFFECT apiType,
     get_parameter_int(document, "reverbPreset", reverbPreset, ret);
     CHECK_RET_ERROR(ret)
     ret = setLocalVoiceReverbPreset(AUDIO_REVERB_PRESET(reverbPreset));
+  } break;
+
+  case SET_VOICE_BEAUTIFIER_PRESET: {
+    int preset;
+    get_parameter_int(document, "preset", preset, ret);
+    CHECK_RET_ERROR(ret)
+
+    ret = setVoiceBeautifierPreset(VOICE_BEAUTIFIER_PRESET(preset));
+  } break;
+
+  case SET_AUDIO_EFFECT_PRESET: {
+    int preset;
+    get_parameter_int(document, "preset", preset, ret);
+    CHECK_RET_ERROR(ret)
+
+    ret = setAudioEffectPreset(AUDIO_EFFECT_PRESET(preset));
+  } break;
+
+  case SET_VOICE_CONVERSATION_PRESET: {
+    int preset;
+    get_parameter_int(document, "preset", preset, ret);
+    CHECK_RET_ERROR(ret)
+
+    ret = setVoiceConversionPreset(VOICE_CONVERSION_PRESET(preset));
+  } break;
+
+  case SET_AUDIO_EFFECT_PARAMETERS: {
+    int preset;
+    get_parameter_int(document, "preset", preset, ret);
+    CHECK_RET_ERROR(ret)
+
+    int param1;
+    get_parameter_int(document, "param1", param1, ret);
+    CHECK_RET_ERROR(ret)
+
+    int param2;
+    get_parameter_int(document, "param2", param2, ret);
+    CHECK_RET_ERROR(ret)
+
+    ret = setAudioEffectParameters(AUDIO_EFFECT_PRESET(preset), param1, param2);
+  } break;
+
+  case SET_VOICE_BEAUTIFIER_PARAMETERS: {
+    int preset;
+    get_parameter_int(document, "preset", preset, ret);
+    CHECK_RET_ERROR(ret)
+
+    int param1;
+    get_parameter_int(document, "param1", param1, ret);
+    CHECK_RET_ERROR(ret)
+
+    int param2;
+    get_parameter_int(document, "param2", param2, ret);
+    CHECK_RET_ERROR(ret)
+
+    ret = setVoiceBeautifierParameters(VOICE_BEAUTIFIER_PRESET(preset), param1, param2);
   } break;
 
   case SET_AUDIO_MIXING_PITCH: {
@@ -1731,6 +2043,22 @@ int RtcEngineBridge::callApi(API_TYPE apiType, const std::string &parameters,
     get_parameter_bool(document, "reliable", reliable, ret);
     CHECK_RET_ERROR(ret)
     ret = createDataStream(reinterpret_cast<int *>(ptr), reliable, ordered);
+  } break;
+
+  case CREATE_DATA_STREAM_2: {
+    bool syncWithAudio;
+    get_parameter_bool(document, "syncWithAudio", syncWithAudio, ret);
+    CHECK_RET_ERROR(ret)
+
+    bool ordered;
+    get_parameter_bool(document, "ordered", ordered, ret);
+    CHECK_RET_ERROR(ret)
+
+    DataStreamConfig config;
+    config.syncWithAudio = syncWithAudio;
+    config.ordered = ordered;
+
+    ret = createDataStream(reinterpret_cast<int *>(ptr), config);
   } break;
 
   case SEND_STREAM_MESSAGE: {
@@ -1921,6 +2249,11 @@ int RtcEngineBridge::setClientRole(CLIENT_ROLE_TYPE role) {
   return mRtcEngine->setClientRole(role);
 }
 
+int RtcEngineBridge::setClientRole(CLIENT_ROLE_TYPE role, const ClientRoleOptions& options) {
+  //LOG_JSON(SET_CLIENT_ROLE_2, "role", role, "options", options);
+  return mRtcEngine->setClientRole(role, options);
+}
+
 int RtcEngineBridge::joinChannel(const char *token, const char *channelId,
                                  const char *info, rtc::uid_t uid) {
   LOG_JSON(JOIN_CHANNEL, "token", token, "channelId", channelId, "info", info,
@@ -1928,9 +2261,21 @@ int RtcEngineBridge::joinChannel(const char *token, const char *channelId,
   return mRtcEngine->joinChannel(token, channelId, info, uid);
 }
 
+int RtcEngineBridge::joinChannel(const char *token, const char *channelId, const char *info,
+                                 uid_t uid, const ChannelMediaOptions& options) {
+  //LOG_JSON(JOIN_CHANNEL_2, "token", token, "channelId", channelId, "info", info,
+  //         "uid", uid, "options", options);
+  return mRtcEngine->joinChannel(token, channelId, info, uid, options);                  
+}
+
 int RtcEngineBridge::switchChannel(const char *token, const char *channelId) {
   LOG_JSON(SWITCH_CHANNEL, "token", token, "channelId", channelId);
   return mRtcEngine->switchChannel(token, channelId);
+}
+
+int RtcEngineBridge::switchChannel(const char* token, const char* channelId, const rtc::ChannelMediaOptions& options) {
+  //LOG_JSON(SWITCH_CHANNEL_2, "token", token, "channelId", channelId, "options", options);
+  return mRtcEngine->switchChannel(token, channelId, options);
 }
 
 int RtcEngineBridge::leaveChannel() {
@@ -2061,6 +2406,11 @@ int RtcEngineBridge::stopEchoTest() {
   return mRtcEngine->stopEchoTest();
 }
 
+int RtcEngineBridge::setCloudProxy(CLOUD_PROXY_TYPE proxyType) {
+  LOG_JSON(SET_CLOUD_PROXY, "proxyType", proxyType);
+  return mRtcEngine->setCloudProxy(proxyType);
+}
+
 int RtcEngineBridge::enableVideo() {
   LOG_JSON(ENABLE_VIDEO);
   return mRtcEngine->enableVideo();
@@ -2182,11 +2532,23 @@ int RtcEngineBridge::startAudioRecording(const char *filePath, int sampleRate,
   return mRtcEngine->startAudioRecording(filePath, sampleRate, quality);
 }
 
+int RtcEngineBridge::startAudioRecording(const AudioRecordingConfiguration& config) {
+  //LOG_JSON(START_AUDIO_RECORDING_3, "config", config);
+  return mRtcEngine->startAudioRecording(config);
+}
+
 int RtcEngineBridge::startAudioMixing(const char *filePath, bool loopback,
                                       bool replace, int cycle) {
   LOG_JSON(START_AUDIO_MIXING, "filePath", filePath, "loopback", loopback,
            "replace", replace, "cycle", cycle);
   return mRtcEngine->startAudioMixing(filePath, loopback, replace, cycle);
+}
+
+int RtcEngineBridge::startAudioMixing(const char* filePath, bool loopback, bool replace, 
+                       int cycle, int startPos) {
+  LOG_JSON(START_AUDIO_MIXING_2, "filePath", filePath, "loopback", loopback,
+           "replace", replace, "cycle", cycle, "startPos", startPos);
+  return mRtcEngine->startAudioMixing(filePath, loopback, replace, cycle, startPos);
 }
 
 int RtcEngineBridge::stopAudioMixing() {
@@ -2242,6 +2604,11 @@ int RtcEngineBridge::getAudioMixingDuration() {
   return mRtcEngine->getAudioMixingDuration();
 }
 
+int RtcEngineBridge::getAudioMixingDuration(const char* filePath) {
+  LOG_JSON(GET_AUDIO_MIXING_DURATION_2, "filePath", filePath);
+  return mRtcEngine->getAudioMixingDuration(filePath);
+}
+
 int RtcEngineBridge::getAudioMixingCurrentPosition() {
   LOG_JSON(GET_AUDIO_MIXING_CURRENT_POSITION);
   return mRtcEngine->getAudioMixingCurrentPosition();
@@ -2289,6 +2656,15 @@ int RtcEngineBridge::playEffect(int soundId, const char *filePath,
                                 publish);
 }
 
+int RtcEngineBridge::playEffect(int soundId, const char* filePath, int loopCount, double pitch, 
+                                double pan, int gain, bool publish, int startPos) {
+  //LOG_JSON(PLAY_EFFECT_2, "soundId", soundId, "filePath", filePath, "loopCount",
+  //         loopCount, "pitch", pitch, "pan", pan, "gain", gain, "publish",
+  //         publish, "startPos", startPos);
+  return mRtcEngine->playEffect(soundId, filePath, loopCount, pitch, pan, gain,
+                                publish, startPos);                                 
+}
+
 int RtcEngineBridge::stopEffect(int soundId) {
   LOG_JSON(STOP_EFFECT, "soundId", soundId);
   return mRtcEngine->stopEffect(soundId);
@@ -2327,6 +2703,26 @@ int RtcEngineBridge::resumeEffect(int soundId) {
 int RtcEngineBridge::resumeAllEffects() {
   LOG_JSON(RESUME_ALL_EFFECTS);
   return mRtcEngine->resumeAllEffects();
+}
+
+int RtcEngineBridge::getEffectDuration(const char* filePath) {
+  LOG_JSON(GET_EFFECT_DURATION, "filePath", filePath);
+  return mRtcEngine->getEffectDuration(filePath);
+}
+  
+int RtcEngineBridge::setEffectPosition(int soundId, int pos) {
+  LOG_JSON(SET_EFFECT_POSITION, "SoundId", soundId, "pos", pos);
+  return mRtcEngine->setEffectPosition(soundId, pos);
+}
+  
+int RtcEngineBridge::getEffectCurrentPosition(int soundId) {
+  LOG_JSON(GET_EFFECT_CURRENT_POSITION, "SoundId", soundId);
+  return mRtcEngine->getEffectCurrentPosition(soundId);
+}
+
+int RtcEngineBridge::enableDeepLearningDenoise(bool enable) {
+  LOG_JSON(ENABLE_DEEPLEARNINGDENOISE, "enable", enable);
+  return mRtcEngine->enableDeepLearningDenoise(enable);
 }
 
 int RtcEngineBridge::enableSoundPositionIndication(bool enabled) {
@@ -2369,6 +2765,31 @@ int RtcEngineBridge::setLocalVoiceReverbPreset(
   return mRtcEngine->setLocalVoiceReverbPreset(reverbPreset);
 }
 
+int RtcEngineBridge::setVoiceBeautifierPreset(VOICE_BEAUTIFIER_PRESET preset) {
+  LOG_JSON(SET_VOICE_BEAUTIFIER_PRESET, "preset", preset);
+  return mRtcEngine->setVoiceBeautifierPreset(preset);
+}
+
+int RtcEngineBridge::setAudioEffectPreset(AUDIO_EFFECT_PRESET preset) {
+  LOG_JSON(SET_AUDIO_EFFECT_PRESET, "preset", preset);
+  return mRtcEngine->setAudioEffectPreset(preset);
+}
+  
+int RtcEngineBridge::setVoiceConversionPreset(VOICE_CONVERSION_PRESET preset) {
+  LOG_JSON(SET_VOICE_CONVERSATION_PRESET, "preset", preset);
+  return mRtcEngine->setVoiceConversionPreset(preset);
+}
+  
+int RtcEngineBridge::setAudioEffectParameters(AUDIO_EFFECT_PRESET preset, int param1, int param2) {
+  LOG_JSON(SET_AUDIO_EFFECT_PARAMETERS, "preset", preset, "param1", param1, "param2", param2);
+  return mRtcEngine->setAudioEffectParameters(preset, param1, param2);
+}
+  
+int RtcEngineBridge::setVoiceBeautifierParameters(VOICE_BEAUTIFIER_PRESET preset, int param1, int param2) {
+  LOG_JSON(SET_VOICE_BEAUTIFIER_PARAMETERS, "preset", preset, "param1", param1, "param2", param2);
+  return mRtcEngine->setVoiceBeautifierParameters(preset, param1, param2);
+}
+
 int RtcEngineBridge::adjustRecordingSignalVolume(int volume) {
   LOG_JSON(ADJUST_RECORDING_SIGNAL_VOLUME, "volume", volume);
   return mRtcEngine->adjustRecordingSignalVolume(volume);
@@ -2377,6 +2798,11 @@ int RtcEngineBridge::adjustRecordingSignalVolume(int volume) {
 int RtcEngineBridge::adjustPlaybackSignalVolume(int volume) {
   LOG_JSON(ADJUST_PLAYBACK_SIGNAL_VOLUME, "volume", volume);
   return mRtcEngine->adjustPlaybackSignalVolume(volume);
+}
+
+int RtcEngineBridge::adjustLoopbackRecordingSignalVolume(int volume) {
+  LOG_JSON(ADJUST_LOOPBACK_RECORDING_SIGNAL_VOLUME, "volume", volume);
+  return mRtcEngine->adjustLoopbackRecordingSignalVolume(volume);
 }
 
 int RtcEngineBridge::setExternalAudioSource(bool enabled, int sampleRate,
@@ -2695,6 +3121,11 @@ int RtcEngineBridge::createDataStream(int *streamId, bool reliable,
   return mRtcEngine->createDataStream(streamId, reliable, ordered);
 }
 
+int RtcEngineBridge::createDataStream(int* streamId, DataStreamConfig& config) {
+  //LOG_JSON(CREATE_DATA_STREAM_2, "config", config);
+  return mRtcEngine->createDataStream(streamId, config);
+}
+
 int RtcEngineBridge::sendStreamMessage(int streamId, const char *data,
                                        size_t length) {
   LOG_JSON(SEND_STREAM_MESSAGE, "streamId", streamId, "length",
@@ -2739,6 +3170,11 @@ int RtcEngineBridge::setBeautyEffectOptions(bool enabled,
                                             BeautyOptions options) {
   LOG_JSON(SET_BEAUTY_EFFECT_OPTIONS, enabled, options);
   return mRtcEngine->setBeautyEffectOptions(enabled, options);
+}
+
+int RtcEngineBridge::enableVirtualBackground(bool enabled, VirtualBackgroundSource backgroundSource) {
+  //LOG_JSON(ENABLE_VIRTUAL_BACKGROUND, enabled, backgroundSource);
+  return mRtcEngine->enableVirtualBackground(enabled, backgroundSource);
 }
 
 int RtcEngineBridge::addInjectStreamUrl(const char *url,
@@ -2872,6 +3308,13 @@ int RtcEngineBridge::pushVideoFrame(media::ExternalVideoFrame *frame) {
   }
 
   return mediaEngine->pushVideoFrame(frame);
+}
+
+int RtcEngineBridge::registerVideoEncodedFrameObserver(media::IVideoEncodedFrameObserver* observer) {
+  if (!mediaEngine.get()) {
+    mediaEngine.queryInterface(mRtcEngine, agora::AGORA_IID_MEDIA_ENGINE);
+  }
+  return mediaEngine->registerVideoEncodedFrameObserver(observer);
 }
 
 int RtcEngineBridge::enableEncryption(

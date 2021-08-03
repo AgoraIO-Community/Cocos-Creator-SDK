@@ -249,14 +249,31 @@ module.exports = {
 #======================================= 
 #=========Agora import segment==========
 ifeq ($(USE_AGORA), 1)
+include $(CLEAR_VARS)
 LOCAL_MODULE := agora-rtc-sdk
 LOCAL_SRC_FILES := $(LOCAL_PATH)/agora/$(TARGET_ARCH_ABI)/libagora-rtc-sdk.so
 include $(PREBUILT_SHARED_LIBRARY)
-${params.sdkType === 'video' && params.isEncrypt ? `
-LOCAL_MODULE := agora-crypto
-LOCAL_SRC_FILES := $(LOCAL_PATH)/agora/$(TARGET_ARCH_ABI)/libagora-crypto.so
+include $(CLEAR_VARS)
+LOCAL_MODULE := agora-soundtouch
+LOCAL_SRC_FILES := $(LOCAL_PATH)/agora/$(TARGET_ARCH_ABI)/libagora-soundtouch.so
 include $(PREBUILT_SHARED_LIBRARY)
-` : ''}
+include $(CLEAR_VARS)
+LOCAL_MODULE := agora-mpg123
+LOCAL_SRC_FILES := $(LOCAL_PATH)/agora/$(TARGET_ARCH_ABI)/libagora-mpg123.so
+include $(PREBUILT_SHARED_LIBRARY)
+include $(CLEAR_VARS)
+LOCAL_MODULE := agora-fdkaac
+LOCAL_SRC_FILES := $(LOCAL_PATH)/agora/$(TARGET_ARCH_ABI)/libagora-fdkaac.so
+include $(PREBUILT_SHARED_LIBRARY)
+include $(CLEAR_VARS)
+LOCAL_MODULE := agora-ffmpeg
+LOCAL_SRC_FILES := $(LOCAL_PATH)/agora/$(TARGET_ARCH_ABI)/libagora-ffmpeg.so
+include $(PREBUILT_SHARED_LIBRARY)
+include $(CLEAR_VARS)
+LOCAL_MODULE := agora-core
+LOCAL_SRC_FILES := $(LOCAL_PATH)/agora/$(TARGET_ARCH_ABI)/libagora-core.so
+include $(PREBUILT_SHARED_LIBRARY)
+
 endif
 #=======================================
         `;
@@ -283,8 +300,7 @@ LOCAL_C_INCLUDES += ../../Classes/agora \\
         ../../Classes/agora/rtcChannel \\
         ../../Classes/agora/rtcEngine \\
         ../../Classes/agora/test
-LOCAL_SHARED_LIBRARIES := agora-rtc-sdk${params.sdkType === 'video' &&
-    params.isEncrypt ? ' agora-crypto' : ''}
+LOCAL_SHARED_LIBRARIES := agora-rtc-sdk agora-rtc-sdk agora-soundtouch agora-mpg123 agora-fdkaac agora-ffmpeg agora-core
 endif
 #======================================
         ` : `
@@ -310,8 +326,7 @@ LOCAL_C_INCLUDES += ../../../Classes/agora \\
         ../../../Classes/agora/rtcChannel \\
         ../../../Classes/agora/rtcEngine \\
         ../../../Classes/agora/test
-LOCAL_SHARED_LIBRARIES := agora-rtc-sdk${params.sdkType === 'video' &&
-    params.isEncrypt ? ' agora-crypto' : ''}
+LOCAL_SHARED_LIBRARIES := agora-rtc-sdk agora-rtc-sdk agora-soundtouch agora-mpg123 agora-fdkaac agora-ffmpeg agora-core
 endif
 #======================================
         `;
@@ -459,11 +474,9 @@ dependencies {
     if (!iosPacker.checkPodEnvironment()) return Promise.reject();
     // 第二步，创建Podfile已经，如果以来已存在，那么不进行修改和更新
     let dependence = (params.sdkType === 'video' ?
-        (params.isEncrypt ?
-            'AgoraRtcEngine_iOS_Crypto' :
-            'AgoraRtcEngine_iOS') :
+        'AgoraRtcEngine_iOS' :
         'AgoraAudio_iOS');
-    let version = (params.sdkType === 'video' ? '\'3.1.2\'' : '\'3.1.2\'');
+    let version = (params.sdkType === 'video' ? '\'3.4.6\'' : '\'3.4.6\'');
     let target = `${options.projectName}-mobile`;
     if (!iosPacker.isDependenceExist(dependence,
         target)) iosPacker.addPodDependenceForTarget(dependence, target,

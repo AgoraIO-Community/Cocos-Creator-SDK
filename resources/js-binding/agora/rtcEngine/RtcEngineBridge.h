@@ -75,10 +75,17 @@ public:
 
   int setClientRole(rtc::CLIENT_ROLE_TYPE role);
 
+  int setClientRole(rtc::CLIENT_ROLE_TYPE role, const rtc::ClientRoleOptions& options);
+
   int joinChannel(const char *token, const char *channelId, const char *info,
                   rtc::uid_t uid);
 
+  int joinChannel(const char *token, const char *channelId, const char *info,
+                  rtc::uid_t uid, const rtc::ChannelMediaOptions& options);                
+
   int switchChannel(const char *token, const char *channelId);
+
+  int switchChannel(const char* token, const char* channelId, const rtc::ChannelMediaOptions& options);
 
   int leaveChannel();
 
@@ -99,6 +106,8 @@ public:
   int startEchoTest(int intervalInSeconds);
 
   int stopEchoTest();
+
+  int setCloudProxy(rtc::CLOUD_PROXY_TYPE proxyType);
 
   int enableVideo();
 
@@ -164,6 +173,8 @@ public:
   int startAudioRecording(const char *filePath, int sampleRate,
                           rtc::AUDIO_RECORDING_QUALITY_TYPE quality);
 
+  int startAudioRecording(const rtc::AudioRecordingConfiguration& config);
+
   int stopAudioRecording();
 
 #if defined(__ANDROID__) || (defined(__APPLE__) && TARGET_OS_IOS)
@@ -195,6 +206,8 @@ public:
   int adjustRecordingSignalVolume(int volume);
 
   int adjustPlaybackSignalVolume(int volume);
+
+  int adjustLoopbackRecordingSignalVolume(int volume);
 
   int enableWebSdkInteroperability(bool enabled);
 
@@ -283,6 +296,8 @@ public:
 
   int createDataStream(int *streamId, bool reliable, bool ordered);
 
+  int createDataStream(int* streamId, rtc::DataStreamConfig& config);
+
   int sendStreamMessage(int streamId, const char *data, size_t length);
 
   int addPublishStreamUrl(const char *url, bool transcodingEnabled);
@@ -299,6 +314,8 @@ public:
   int clearVideoWatermarks();
 
   int setBeautyEffectOptions(bool enabled, rtc::BeautyOptions options);
+
+  int enableVirtualBackground(bool enabled, rtc::VirtualBackgroundSource backgroundSource);
 
   int addInjectStreamUrl(const char *url,
                          const rtc::InjectStreamConfig &config);
@@ -324,6 +341,9 @@ public:
   int startAudioMixing(const char *filePath, bool loopback, bool replace,
                        int cycle);
 
+  int startAudioMixing(const char* filePath, bool loopback, bool replace, 
+                       int cycle, int startPos);
+
   int stopAudioMixing();
 
   int pauseAudioMixing();
@@ -345,6 +365,8 @@ public:
 
   int getAudioMixingDuration();
 
+  int getAudioMixingDuration(const char* filePath);
+
   int getAudioMixingCurrentPosition();
 
   int setAudioMixingPosition(int pos /*in ms*/);
@@ -359,6 +381,9 @@ public:
 
   int playEffect(int soundId, const char *filePath, int loopCount, double pitch,
                  double pan, int gain, bool publish = false);
+
+  int playEffect(int soundId, const char* filePath, int loopCount, double pitch, 
+                 double pan, int gain, bool publish, int startPos);
 
   int stopEffect(int soundId);
 
@@ -376,6 +401,14 @@ public:
 
   int resumeAllEffects();
 
+  int getEffectDuration(const char* filePath);
+  
+  int setEffectPosition(int soundId, int pos);
+  
+  int getEffectCurrentPosition(int soundId);
+
+  int enableDeepLearningDenoise(bool enable);
+
   int enableSoundPositionIndication(bool enabled);
 
   int setLocalVoicePitch(double pitch);
@@ -388,6 +421,16 @@ public:
   int setLocalVoiceChanger(rtc::VOICE_CHANGER_PRESET voiceChanger);
 
   int setLocalVoiceReverbPreset(rtc::AUDIO_REVERB_PRESET reverbPreset);
+
+  int setVoiceBeautifierPreset(rtc::VOICE_BEAUTIFIER_PRESET preset);
+
+  int setAudioEffectPreset(rtc::AUDIO_EFFECT_PRESET preset);
+  
+  int setVoiceConversionPreset(rtc::VOICE_CONVERSION_PRESET preset);
+  
+  int setAudioEffectParameters(rtc::AUDIO_EFFECT_PRESET preset, int param1, int param2);
+  
+  int setVoiceBeautifierParameters(rtc::VOICE_BEAUTIFIER_PRESET preset, int param1, int param2);
 
   int setExternalAudioSource(bool enabled, int sampleRate, int channels);
 
@@ -421,6 +464,8 @@ public:
   int setExternalVideoSource(bool enable, bool useTexture);
 
   int pushVideoFrame(media::ExternalVideoFrame *frame);
+
+  int registerVideoEncodedFrameObserver(media::IVideoEncodedFrameObserver* observer);
 
   int enableEncryption(bool enabled,
                        const agora::rtc::EncryptionConfig &config);

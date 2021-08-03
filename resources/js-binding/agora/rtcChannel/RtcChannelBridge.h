@@ -78,6 +78,10 @@ public:
 
   int setDefaultMuteAllRemoteVideoStreams(bool mute);
 
+  int muteLocalAudioStream(bool mute);
+  
+  int muteLocalVideoStream(bool mute);
+
   int muteAllRemoteAudioStreams(bool mute);
 
   int adjustUserPlaybackSignalVolume(rtc::uid_t userId, int volume);

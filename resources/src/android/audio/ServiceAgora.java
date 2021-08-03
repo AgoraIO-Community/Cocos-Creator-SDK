@@ -11,11 +11,13 @@ import android.support.v4.content.ContextCompat;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.agora.rtc.internal.RtcEngineImpl;
+
 public class ServiceAgora extends SDKClass {
   @Override
   public void init(Context context) {
     super.init(context);
-    System.loadLibrary("agora-rtc-sdk");
+    RtcEngineImpl.initializeNativeLibs();
   }
 
   public static boolean checkAndRequestAppPermission(@NonNull Activity activity, String[] permissions, int reqCode) {
