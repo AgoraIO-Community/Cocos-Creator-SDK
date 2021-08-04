@@ -261,6 +261,49 @@ declare namespace agora {
         AUDIO_MIXING_ERROR_OK = 0
     }
     /**
+     * The reason codes of the local user's audio mixing file.
+     */
+    enum AUDIO_MIXING_REASON_TYPE {
+        /** 701: The SDK cannot open the music file. Possible causes include the local
+         * music file does not exist, the SDK does not support the file format, or the
+         * SDK cannot access the music file URL.
+         */
+        AUDIO_MIXING_REASON_CAN_NOT_OPEN = 701,
+        /** 702: The SDK opens the music file too frequently. If you need to call
+         * \ref IRtcEngine::startAudioMixing(const char*,bool,bool,int,int) "startAudioMixing" multiple times, ensure
+         * that the call interval is longer than 500 ms.
+         */
+        AUDIO_MIXING_REASON_TOO_FREQUENT_CALL = 702,
+        /** 703: The music file playback is interrupted.
+         */
+        AUDIO_MIXING_REASON_INTERRUPTED_EOF = 703,
+        /** 720: Successfully calls \ref IRtcEngine::startAudioMixing(const char*,bool,bool,int,int) "startAudioMixing"
+         * to play a music file.
+         */
+        AUDIO_MIXING_REASON_STARTED_BY_USER = 720,
+        /** 721: The music file completes a loop playback.
+         */
+        AUDIO_MIXING_REASON_ONE_LOOP_COMPLETED = 721,
+        /** 722: The music file starts a new loop playback.
+         */
+        AUDIO_MIXING_REASON_START_NEW_LOOP = 722,
+        /** 723: The music file completes all loop playback.
+         */
+        AUDIO_MIXING_REASON_ALL_LOOPS_COMPLETED = 723,
+        /** 724: Successfully calls \ref IRtcEngine::stopAudioMixing "stopAudioMixing"
+         * to stop playing the music file.
+         */
+        AUDIO_MIXING_REASON_STOPPED_BY_USER = 724,
+        /** 725: Successfully calls \ref IRtcEngine::pauseAudioMixing "pauseAudioMixing"
+         * to pause playing the music file.
+         */
+        AUDIO_MIXING_REASON_PAUSED_BY_USER = 725,
+        /** 726: Successfully calls \ref IRtcEngine::resumeAudioMixing "resumeAudioMixing"
+         * to resume playing the music file.
+         */
+        AUDIO_MIXING_REASON_RESUMED_BY_USER = 726
+    }
+    /**
      * Local video state types
      */
     enum LOCAL_VIDEO_STREAM_STATE {
@@ -5206,9 +5249,9 @@ declare class AgoraRtcEvents {
     onAudioMixingStateChanged: 
     /**
      * @param state The state code. See [AUDIO_MIXING_STATE_TYPE]{@link agora.AUDIO_MIXING_STATE_TYPE}.
-     * @param errorCode The error code. See [AUDIO_MIXING_ERROR_TYPE]{@link agora.AUDIO_MIXING_ERROR_TYPE}.
+     * @param resaon The reason code. See [AUDIO_MIXING_REASON_TYPE]{@link agora.AUDIO_MIXING_REASON_TYPE}.
      */
-    (state: agora.AUDIO_MIXING_STATE_TYPE, errorCode: agora.AUDIO_MIXING_ERROR_TYPE) => void;
+    (state: agora.AUDIO_MIXING_STATE_TYPE, reason: agora.AUDIO_MIXING_REASON_TYPE) => void;
     /**
      * Occurs when a remote user starts audio mixing.
      * When a remote user calls [startAudioMixing]{@link agora.startAudioMixing} to play the background music, the SDK reports

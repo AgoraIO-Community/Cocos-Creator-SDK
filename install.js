@@ -313,7 +313,7 @@ LOCAL_C_INCLUDES += ../../Classes/agora \\
         ../../Classes/agora/rtcChannel \\
         ../../Classes/agora/rtcEngine \\
         ../../Classes/agora/test
-LOCAL_SHARED_LIBRARIES := agora-rtc-sdk agora-rtc-sdk agora-soundtouch agora-mpg123 agora-fdkaac agora_ai_denoise_extension agora-core${params.sdkType === 'video' 
+LOCAL_SHARED_LIBRARIES := agora-rtc-sdk agora-soundtouch agora-mpg123 agora-fdkaac agora_ai_denoise_extension agora-core${params.sdkType === 'video' 
  ? ' agora-ffmpeg agora_dav1d_extension agora_jnd_extension' : ''}
 endif
 #======================================
@@ -340,7 +340,7 @@ LOCAL_C_INCLUDES += ../../../Classes/agora \\
         ../../../Classes/agora/rtcChannel \\
         ../../../Classes/agora/rtcEngine \\
         ../../../Classes/agora/test
-LOCAL_SHARED_LIBRARIES := agora-rtc-sdk agora-rtc-sdk agora-soundtouch agora-mpg123 agora-fdkaac agora_ai_denoise_extension agora-core${params.sdkType === 'video' 
+LOCAL_SHARED_LIBRARIES := agora-rtc-sdk agora-soundtouch agora-mpg123 agora-fdkaac agora_ai_denoise_extension agora-core${params.sdkType === 'video' 
  ? ' agora-ffmpeg agora_dav1d_extension agora_jnd_extension' : ''}
 endif
 #======================================
