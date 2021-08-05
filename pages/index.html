@@ -32,10 +32,6 @@
             <label><input type="radio" name="sdkType" v-model="sdkType" value="video" :checked='sdkType === "video"'/>
                 Video </label>
         </ui-prop>
-        <ui-prop v-if="sdkType === 'video'" class="flex-1 prop-item" name="{{ utils_t('agora.is_encrypt') }}"
-                 tooltip="{{ utils_t('agora.is_encrypt_tips') }}">
-            <ui-checkbox @click="enableEncrypt" :checked="isEncrypt"></ui-checkbox>
-        </ui-prop>
         <div class="div-no-wrap" style="margin-top: 10px;">
             <div class="flex-1"></div>
             <ui-button @click="saveParam" class="blue">{{ utils_t('btn_save') }}</ui-button>

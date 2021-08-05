@@ -7,6 +7,4 @@ module.exports = {
     "save_param_success": "保存参数成功!",
     "sdk_type": "SDK 类型",
     "sdk_type_tips": "SDK 类型",
-    "is_encrypt": "是否加密",
-    "is_encrypt_tips": "是否加密",
 };

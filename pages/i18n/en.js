@@ -7,6 +7,4 @@ module.exports = {
     "save_param_success": "Save Param Success!",
     "sdk_type": "SDK Type",
     "sdk_type_tips": "SDK Type",
-    "is_encrypt": "Encryption",
-    "is_encrypt_tips": "Encryption",
 };

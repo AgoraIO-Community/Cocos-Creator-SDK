@@ -188,7 +188,7 @@ module.exports = {
 
   praseHTML() {
     const agoraHtml = `
-<script src="https://cdn.agora.io/sdk/release/AgoraRTCSDK-3.1.2.js" charset="utf-8"></script>
+<script src="https://cdn.agora.io/sdk/release/AgoraRTCSDK-3.6.2.js" charset="utf-8"></script>
 `;
     projHelper.insertScriptToIndexHTML(agoraHtml);
   },

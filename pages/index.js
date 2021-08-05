@@ -13,13 +13,11 @@ var agoraVue = Vue.extend({
     data() {
         return {
             paramList: this.params,
-            isEncrypt: this.params.isEncrypt || false,
             sdkType: this.params.sdkType || "audio",
         };
     },
     created() {
         this.paramList.sdkType = this.sdkType || "audio";
-        this.paramList.isEncrypt = this.isEncrypt || false;
         this.$emit("save-param", this.paramList);
     },
     methods: {
@@ -28,7 +26,6 @@ var agoraVue = Vue.extend({
         },
         saveParam: function () {
             this.paramList.sdkType = this.sdkType;
-            this.paramList.isEncrypt = this.isEncrypt;
             this.$emit("save-param", this.paramList);
 
             if (this.sdkType === "video") {
@@ -42,9 +39,6 @@ var agoraVue = Vue.extend({
 
             utils.printToCreatorConsole("info", this.utils_t("agora.save_param_success"));
         },
-        enableEncrypt: function (e) {
-            this.isEncrypt = e.target.checked;
-        }
     }
 });
 
